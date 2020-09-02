@@ -12,9 +12,10 @@
     "build:server": "cp -r src/server build/",
     "db-drop": "dropdb messenger",
     "db-create": "createdb messenger",
+    "db-role": "psql -f db/create-role.sql messenger",
     "db-tables": "psql -f db/create-tables.sql messenger",
     "api-test": "tests/api/channels.sh 30303 && tests/api/users.sh 30303 && tests/api/user_in_channel.sh 30303 && tests/api/messages.sh 30303",
-    "db": "npm run db-drop > /dev/null; npm run db-create && npm run db-tables && npm run api-test"
+    "db": "npm run db-drop > /dev/null; npm run db-role 2> /dev/null; npm run db-create && npm run db-tables && npm run api-test"
   },
   "dependencies": {
     "@babel/cli": "7.2.3",
