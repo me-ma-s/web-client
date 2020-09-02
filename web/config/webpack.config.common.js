@@ -16,7 +16,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         use: ['babel-loader'],
         exclude: /node_modules/
       },
@@ -79,7 +79,8 @@ module.exports = {
     new webpack.EnvironmentPlugin(['NODE_ENV'])
   ],
   resolve: {
-    modules: ['node_modules', join('src', 'client')]
+    modules: ['node_modules', join('src', 'client')],
+    extensions: ['.js', '.jsx']
   },
   optimization: {
     splitChunks: {
