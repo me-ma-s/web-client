@@ -3,8 +3,8 @@
 # Быстрый запуск и настройка всего и сразу
 Перейти в web/
 > npm install  
-npm run db  
-npm run dev
+npm run dev  
+npm run db
 # Если предыдущий способ не работает
 1. Убедитесь, что у вас установлен npm
 > npm -v
