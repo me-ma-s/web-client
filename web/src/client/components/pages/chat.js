@@ -4,7 +4,6 @@ import Hidden from '@material-ui/core/Hidden';
 
 import LeftContent from '../LeftContent'
 import ChatContent from '../ChatContent'
-import ChantContent from '../ChatContent';
 
 
 const Left = styled.div`
@@ -58,12 +57,12 @@ const Chat = () => {
           <LeftContent/>
         </Left>
         <Right>
-          <ChantContent/>
+          <ChatContent/>
         </Right>
       </Hidden>
       <Hidden only={['lg','xl','sm','md']}>
         <RightWithoutLeft>
-          <ChantContent/>
+          <ChatContent/>
         </RightWithoutLeft>
       </Hidden>
     </Root>
