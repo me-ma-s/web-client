@@ -1,7 +1,6 @@
 web/build
 web/build-dev
 web/node_modules
-web/package-lock.json
-web/logs
+package-lock.json
 .DS_Store 
 .vscode 

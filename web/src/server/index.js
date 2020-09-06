@@ -3,8 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const setupApiRoutes = require('./middlewares/api');
-const logger = require('./logger');
-const authFilter = require('./middlewares/auth-filter');
+const { logger } = require('./services/logger');
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 process.env.HTTP_PORT = process.env.HTTP_PORT || 30303;
@@ -30,11 +29,8 @@ app.set('env', process.env.NODE_ENV);
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-if(process.env.NODE_ENV == 'production') {
-  authFilter(app);
-}
 
-app.use(logger.expressMiddleware);
+app.use(logger);
 try {
   setupApiRoutes(app);
 } catch (e) {

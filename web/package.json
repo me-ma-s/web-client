@@ -9,7 +9,13 @@
     "start": "cross-env NODE_ENV=production node build/server",
     "build": "npm run build:client && npm run build:server",
     "build:client": "cross-env NODE_ENV=production webpack -p --progress --config=config/webpack.config.prod.js",
-    "build:server": "cp -r src/server build/"
+    "build:server": "cp -r src/server build/",
+    "db-drop": "dropdb messenger",
+    "db-create": "createdb messenger",
+    "db-role": "psql -f db/create-role.sql messenger",
+    "db-tables": "psql -f db/create-tables.sql messenger",
+    "api-test": "tests/api/channels.sh 30303 && tests/api/users.sh 30303 && tests/api/user_in_channel.sh 30303 && tests/api/messages.sh 30303",
+    "db": "npm run db-drop > /dev/null; npm run db-role 2> /dev/null; npm run db-create && npm run db-tables && npm run api-test"
   },
   "dependencies": {
     "@babel/cli": "7.2.3",
@@ -35,13 +41,10 @@
     "copyfiles": "^2.1.1",
     "cross-env": "5.2.0",
     "css-loader": "^2.1.1",
-    "excel4node": "^1.7.2",
     "express": "4.16.4",
     "extract-text-webpack-plugin": "4.0.0-beta.0",
     "file-loader": "^3.0.1",
     "fs": "0.0.1-security",
-    "highcharts": "^7.1.2",
-    "highcharts-react-official": "^2.2.2",
     "html-loader": "0.5.5",
     "html-webpack-harddisk-plugin": "1.0.1",
     "html-webpack-plugin": "3.2.0",
@@ -49,7 +52,7 @@
     "node-sass": "*",
     "nodemailer": "^6.4.2",
     "nodemon": "^1.19.1",
-    "pg": "^7.14.0",
+    "pg": "^8.3.3",
     "pg-promise": "^9.3.6",
     "postcss-loader": "3.0.0",
     "postcss-preset-env": "6.5.0",
@@ -62,6 +65,7 @@
     "react-router-redux": "^4.0.8",
     "redux": "^4.0.4",
     "redux-logger": "^3.0.6",
+    "response-time": "^2.3.2",
     "sanitize.css": "^11.0.0",
     "sass-loader": "*",
     "string": "^3.3.3",
@@ -74,7 +78,6 @@
     "webpack-dev-middleware": "3.5.1",
     "webpack-hot-middleware": "2.24.3",
     "webpack-merge": "4.2.1",
-    "whatwg-fetch": "3.0.0",
-    "winston": "^3.2.1"
+    "whatwg-fetch": "3.0.0"
   }
 }
