@@ -1,16 +1,13 @@
-const { client } = require('../services/pg'); // object of type Pool from require('pg')
-const { addQuotes } = require('../helpers/addQuotes');
+const { pgInsert } = require('../services/pg'); // object of type Pool from require('pg')
 const putQueryTime = require('response-time');
 
 // const IS_PROD = true;
 const IS_PROD = process.env.NODE_ENV === 'production';
 const IS_DEV = process.env.NODE_ENV === 'development';
 
-module.exports.logger = putQueryTime(log);
-
 function log(req, res, queryTime) {
   if (IS_DEV) { logToConsole(req); }
-  // if (IS_PROD) { logToPostgres(req, queryTime); }
+  if (IS_PROD) { logToPostgres(req, queryTime); }
 }
 
 function logToConsole(req) {
@@ -37,23 +34,24 @@ function logToConsole(req) {
 async function logToPostgres(req, queryTime) {
   const logDate = new Date();
 
-  const login = addQuotes("unknown");
-  const created_at = addQuotes(logDate);
-  const month = (100 * logDate.getUTCFullYear()) + logDate.getUTCMonth() + 1;
-  const service = addQuotes(process.env.npm_package_name);
-  const query = addQuotes(req.originalUrl);
-  const params = addQuotes(JSON.stringify(req.params));
-  const query_time = queryTime; //
-  const ip = addQuotes(req.ip);
-  const url = addQuotes(req.protocol + "://" + req.headers.host + req.originalUrl);
-  const domain = addQuotes(req.headers.host);
+  const info = {
+    login: 'unknown',
+    created_at: logDate,
+    month: (100 * logDate.getUTCFullYear()) + logDate.getUTCMonth() + 1,
+    service: process.env.npm_package_name,
+    query: req.originalUrl,
+    params: req.params,
+    query_time: queryTime,
+    ip: req.ip,
+    url: req.protocol + "://" + req.headers.host + req.originalUrl,
+    domain: req.headers.host
+  };
 
   try {
-    await client.query(`
-            INSERT INTO logs (id, login, created_at, month, service, query, params, query_time, ip, url, domain)
-                VALUES (DEFAULT, ${login}, ${created_at}, ${month}, ${service}, ${query}, ${params}, ${query_time}, ${ip}, ${url}, ${domain})
-        `);
+    await pgInsert('logs', info);
   } catch (err) {
     console.log(err.stack);
   }
 }
+
+module.exports.logger = putQueryTime(log);

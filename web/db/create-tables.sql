@@ -10,20 +10,11 @@ DROP TYPE IF EXISTS key_type;
 
 
 CREATE TABLE channels (
-    id              BIGSERIAL  PRIMARY KEY,
-    name            TEXT       NOT NULL,
-    parent_id       BIGINT     DEFAULT NULL CHECK (parent_id IS NULL OR parent_id >= 1),
-    _enckey_parent  JSON       DEFAULT NULL
-    -- CHECK (
-    --     (parent_id IS NULL
-    --         AND _enckey_parent IS NULL
-    --     )
-    --     OR
-    --     (parent_id IS NOT NULL
-    --         AND _enckey_parent IS NOT NULL
-    --         AND parent_id > 0
-    --     )
-    -- )
+  id              BIGSERIAL  PRIMARY KEY,
+  name            TEXT       NOT NULL,
+  avatar_url      TEXT       DEFAULT 'https://static.wikia.nocookie.net/dogelore/images/9/97/Doge.jpg/revision/latest/top-crop/width/360/height/450?cb=20190205113053',
+  description     TEXT,
+  reload_interval INT        DEFAULT 30000
 );
 
 CREATE TABLE users (
@@ -67,16 +58,16 @@ CREATE TABLE messages (
 
 CREATE TABLE logs (
   id          BIGSERIAL PRIMARY KEY,
-  login       TEXT NOT NULL,
-  created_at  TIMESTAMP NOT NULL,
-  month       INT  NOT NULL,
-  service     TEXT NOT NULL,
-  query       TEXT NOT NULL,
-  params      TEXT NOT NULL,
-  query_time  INT NOT NULL,
-  ip          TEXT NOT NULL,
-  url         TEXT NOT NULL,
-  domain      TEXT NOT NULL
+  login       TEXT,
+  created_at  TIMESTAMP,
+  month       INT ,
+  service     TEXT,
+  query       TEXT,
+  params      TEXT,
+  query_time  NUMERIC,
+  ip          TEXT,
+  url         TEXT,
+  domain      TEXT
 );
 
 

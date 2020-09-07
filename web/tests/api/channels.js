@@ -3,7 +3,7 @@ const { createPostFunc, get } = require('./functions');
 const postChannel = createPostFunc('postChannel');
 
 const channels = [
-  { name: 'Канал 1' },
+  { name: 'Канал 1', reload_interval: 5000 },
   { name: 'Канал 2' },
   { name: 'Канал 3' },
 ];
