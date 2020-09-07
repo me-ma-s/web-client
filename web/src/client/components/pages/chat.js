@@ -10,7 +10,7 @@ const Left = styled.div`
   display : flex;
   height : 99%;
   width : 29%;
-  min-width : 280px;
+  min-width : 350px;
   margin : 0% 0.5%;
   background-color : white;
   overflow-y : auto;
@@ -52,7 +52,7 @@ const Root = styled.div`
 const Chat = () => {
   return ( 
     <Root>
-      <Hidden only={['xs']}>
+      <Hidden only={['xs','sm']}>
         <Left>
           <LeftContent/>
         </Left>
@@ -60,7 +60,7 @@ const Chat = () => {
           <ChatContent/>
         </Right>
       </Hidden>
-      <Hidden only={['lg','xl','sm','md']}>
+      <Hidden only={['lg','xl','md']}>
         <RightWithoutLeft>
           <ChatContent/>
         </RightWithoutLeft>

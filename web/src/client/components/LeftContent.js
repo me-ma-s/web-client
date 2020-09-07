@@ -3,6 +3,9 @@ import styled from 'styled-components'
 import Header from './header'
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Divider from '@material-ui/core/Divider';
+
+import ChannelsList from './ChannelsList'
 
 
 const TabsPlace = styled.div`
@@ -13,7 +16,6 @@ const TabsPlace = styled.div`
 const StTabs = styled(Tabs)`
   width : 100%;
   background-color : #f5f5f5;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 3px -1px, rgba(0, 0, 0, 0.2) 0px 2px 2px 0px, rgba(0, 0, 0, 0.2) 0px 1px 3px 0px;
   & > div{
     & > div{
       & > button{
@@ -55,7 +57,13 @@ const LeftContent = () => {
           <Tab label="Папки"  value={true} />
         </StTabs>
       </TabsPlace>
-      
+      <Divider/>
+      { tabsState 
+        ?
+        null
+        :
+        <ChannelsList searchWord={searchState} />
+      }
     </div>
   )
 }
