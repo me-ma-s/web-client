@@ -1,0 +1,24 @@
+const { createPostFunc, get } = require('./functions');
+
+const postChannel = createPostFunc('postChannel');
+
+const channels = [
+  { name: 'Канал 1' },
+  { name: 'Канал 2' },
+  { name: 'Канал 3' },
+];
+
+const runTests = async () => {
+  console.log('Создаем каналы:');
+  for (let ch of channels) {
+    await postChannel(ch).then(({ data }) => { console.log(data) });
+  }
+
+  console.log('Запрашиваем все каналы:')
+  await get('getAllChannels').then(({ data }) => console.log(data))
+
+  console.log('Запрашиваем канал с id=2:')
+  await get('getChannel?channel_id=2').then(({ data }) => console.log(data))
+}
+
+runTests();
