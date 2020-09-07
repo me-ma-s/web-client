@@ -8,6 +8,8 @@ function addQuotes(param) {
       }
     case 'undefined':
       return 'null';
+    case 'numeric':
+      return param;
     default:
       return "'" + param.toString() + "'";
   }

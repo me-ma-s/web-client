@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const insert = require('../helpers/insert');
 
 const client = new Pool({
   host: 'localhost',
@@ -8,7 +9,11 @@ const client = new Pool({
   password: 'postgres'
 });
 
+const pgInsert = (table, obj) => {
+  return client.query(insert(table, obj));
+}
 
 module.exports = {
-  client
+  client,
+  pgInsert
 };

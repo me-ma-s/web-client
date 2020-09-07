@@ -1,20 +1,8 @@
-const { client } = require('../../services/pg');
-const { addQuotes } = require('../../helpers/addQuotes');
-
+const { pgInsert } = require('../../services/pg');
 
 async function postMessage(req, res) {
   try {
-    const channel_id = req.body.channel_id;
-    const answer_to_id = req.body.answer_to_id || null;
-    const user_id = req.body.user_id;
-    const _text = addQuotes(req.body._text);
-
-    const { rows } = await client.query(`
-      INSERT INTO messages(id, channel_id, answer_to_id, user_id, date_time, _text)
-      VALUES(DEFAULT, ${channel_id}, ${answer_to_id}, ${user_id}, DEFAULT, ${_text})
-      RETURNING *
-    `);
-
+    const { rows } = await pgInsert('messages', req.body);
     res.send(rows[0]);
 
   } catch (err) {
@@ -23,4 +11,4 @@ async function postMessage(req, res) {
   }
 }
 
-module.exports = { postMessage };
+module.exports = { postMessage }
