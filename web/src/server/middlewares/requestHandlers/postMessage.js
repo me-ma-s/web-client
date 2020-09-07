@@ -1,4 +1,5 @@
 const { pgInsert } = require('../../services/pg');
+const handleError = require('./handleError');
 
 async function postMessage(req, res) {
   try {
@@ -6,8 +7,7 @@ async function postMessage(req, res) {
     res.send(rows[0]);
 
   } catch (err) {
-    console.log(err.stack);
-    res.send("Error");
+    handleError(err, res);
   }
 }
 

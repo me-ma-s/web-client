@@ -1,5 +1,5 @@
 const { client } = require('../../services/pg');
-
+const handleError = require('./handleError');
 
 async function getMessages(req, res) {
   try {
@@ -11,10 +11,9 @@ async function getMessages(req, res) {
     `);
 
     res.send(rows);
-    
+
   } catch (err) {
-    console.log(err.stack);
-    res.send("Error");
+    handleError(err, res);
   }
 }
 

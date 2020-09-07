@@ -25,7 +25,7 @@ CREATE TABLE users (
   email_pass_hash BYTEA, -- NOT NULL,
   pubkey          BYTEA, -- NOT NULL UNIQUE
   _privkey        BYTEA, -- NOT NULL
-  avatar_url  	  TEXT
+  avatar_url  	  TEXT      DEFAULT 'https://i.ytimg.com/vi/tWE_2HySBhc/hqdefault.jpg'
 );
 
 CREATE TABLE user_in_channel (
@@ -38,13 +38,12 @@ CREATE TABLE user_in_channel (
 );
 
 CREATE TABLE messages (
-  id              BIGSERIAL NOT NULL UNIQUE,
-  channel_id      INT     NOT NULL        REFERENCES channels(id),
-  user_id         BIGINT  NOT NULL,
-  answer_to_id    INT     DEFAULT NULL    REFERENCES messages(id),
-  date_time       TIMESTAMP  NOT NULL DEFAULT current_timestamp,
-  _text           TEXT   NOT NULL,
-  PRIMARY KEY (id, channel_id)
+  id              BIGSERIAL  PRIMARY KEY,
+  channel_id      INT        NOT NULL      REFERENCES channels(id),
+  user_id         BIGINT     NOT NULL      REFERENCES users(id),
+  answer_to_id    INT        DEFAULT NULL  REFERENCES messages(id),
+  date_time       TIMESTAMP  NOT NULL      DEFAULT current_timestamp,
+  _text           TEXT   NOT NULL
 );
 
 -- CREATE TABLE attachments (

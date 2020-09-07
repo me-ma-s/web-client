@@ -3,8 +3,8 @@ const { createPostFunc, get } = require('./functions');
 const postUser = createPostFunc('postUser');
 
 const users = [
-  {email: 'mail@mail.ru', name: 'Иван', surname: 'Иванов', avatar_url: 'https://someUrl'},
-  {email: 'othermail@mail.ru', name: 'Иван', surname: 'Иванов', avatar_url: 'https://someUrl'},
+  { email: 'mail@mail.ru', name: 'Иван', surname: 'Иванов', avatar_url: 'https://someUrl' },
+  { email: 'othermail@mail.ru', name: 'Иван', surname: 'Иванов', avatar_url: 'https://someUrl' },
 ];
 
 const runTests = async () => {
