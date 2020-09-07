@@ -15,7 +15,7 @@ async function postMessage(req, res) {
       RETURNING *
     `);
 
-    res.send(rows);
+    res.send(rows[0]);
 
   } catch (err) {
     console.log(err.stack);
