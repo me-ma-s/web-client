@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components'
 import Hidden from '@material-ui/core/Hidden';
 
@@ -50,19 +50,20 @@ const Root = styled.div`
 `;
 
 const Chat = () => {
+  const [ currentId , setCurrentId  ] = useState(null)
   return ( 
     <Root>
       <Hidden only={['xs','sm']}>
         <Left>
-          <LeftContent/>
+          <LeftContent changeChannels={setCurrentId}/>
         </Left>
         <Right>
-          <ChatContent/>
+          <ChatContent id={currentId}/>
         </Right>
       </Hidden>
       <Hidden only={['lg','xl','md']}>
         <RightWithoutLeft>
-          <ChatContent/>
+          <ChatContent id={currentId}/>
         </RightWithoutLeft>
       </Hidden>
     </Root>

@@ -28,7 +28,7 @@ const StT = styled(Typography)`
 
 
 
-const ChannelsList = ({searchWord}) => {
+const ChannelsList = ({searchWord,cb}) => {
 
   const [ channels, setChannels ] = useState([]);
 
@@ -75,7 +75,7 @@ const ChannelsList = ({searchWord}) => {
     
     return(
       [
-        <ListItem key={el.id}>
+        <ListItem onClick={()=>{cb(el.id)}} key={el.id}>
             <ListItemText>
               <StT>
                 { posArray.map( (elem,index)=>!elem.textColor? elem.textToken : <YellowBack  key={index}>{elem.textToken}</YellowBack>)}

@@ -37,13 +37,17 @@ const StTabs = styled(Tabs)`
 `;
 
 
-const LeftContent = () => {
+const LeftContent = ({changeChannels}) => {
 
   const [ tabsState , updateTabsState ] = useState(false)
   const [ searchState , updateSearchState] = useState('')
+  const [ currentId , setCurrentId ] = useState(null)
   const setSearchState = ( text ) => {
     updateSearchState(text)
   }
+  useEffect(()=>{
+    changeChannels(currentId)
+  },[currentId])
 
   return ( 
     <div>
@@ -62,7 +66,7 @@ const LeftContent = () => {
         ?
         null
         :
-        <ChannelsList searchWord={searchState} />
+        <ChannelsList searchWord={searchState} cb={setCurrentId}/>
       }
     </div>
   )
