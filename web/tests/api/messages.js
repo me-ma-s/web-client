@@ -3,8 +3,9 @@ const { createPostFunc, get } = require('./functions');
 const postMessage = createPostFunc('postMessage');
 
 const messages = [
-  {user_id: 123, channel_id: 1, _text: 'hello 1'},
-  {user_id: 123, channel_id: 2, _text: 'hello 2'},
+  { user_id: 1, channel_id: 1, _text: 'hello 11' },
+  { user_id: 1, channel_id: 2, _text: 'hello 12' },
+  { user_id: 2, channel_id: 1, _text: 'hello 21' },
 ];
 
 const runTests = async () => {
