@@ -56,14 +56,19 @@ const StListItem = styled(ListItem)`
 
 const StListSubheader = styled(ListSubheader)`
   font-size : 25px;
-  padding : 0px 2px !important;
+  padding-right : 12.5px;
+  padding-left : 8px;
+  align-self: center !important;
+  vertical-align: middle !important;
+  text-align:center !important;
   color : #607d8b;
   :hover{
     background-color : rgba(200,200,210,0);
     font-size : 32px;
+    padding-right : 8px;
     color : #546e7a;
     transition-property: font-size, color, padding-right, vertical-align , align-self,text-align ;
-    transition-timing-function: cubic-bezier(0.0, 0.0, 1.0, 0.1);
+    transition-timing-function: cubic-bezier(0.1, 0.9, 0.1, 1);
     transition-duration: 100ms;
     transition-delay: 0ms;
   }
@@ -77,7 +82,8 @@ const StAvatar = styled(Avatar)`
 
 
 
-const ChannelsList = ({searchWord,cb,channels,updateKeys}) => {
+  const [ channels, setChannels ] = useState([]);
+  
   
   const [ colorSet, setColorSet ] = useState({});
   const updateColorSet = ( obj ) => {
@@ -87,7 +93,6 @@ const ChannelsList = ({searchWord,cb,channels,updateKeys}) => {
       }
     }
   }
-
 
   const ColorArray=[
      '#f44336',
@@ -135,7 +140,10 @@ const ChannelsList = ({searchWord,cb,channels,updateKeys}) => {
      '#6d4c41',
      '#546e7a'
   ]
- 
+
+
+  
+
   const ChannelElement = (el)=>{
     let posArray=[];
 
@@ -177,25 +185,11 @@ const ChannelsList = ({searchWord,cb,channels,updateKeys}) => {
       
     }
     
-    const SetChannel = ()=>{
-      if(el.key_id === null){
-        updateKeys({
-          channelKey : null
-        })
-      }
-      else {
-        getQuery('/getKey',{ id : el.key_id})
-          .then((data)=>{if(data!==null){console.log({data});updateKeys({
-            channelKey : data.key
-          })}})
-      }
-      cb(el.id);
-    }
 
 
     return(
       [
-        <StListItem button={true} onClick={SetChannel} key={el.id}>
+        <StListItem button={true} onClick={()=>{cb(el.id)}} key={el.id}>
             <ListItemAvatar>
               <StAvatar variant={'rounded'} cl={colorSet[el.name]} src={el.avatar_url}> 
                 {el.name.slice(0,2)}
