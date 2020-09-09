@@ -1,4 +1,3 @@
-import forge from 'node-forge';
 import {
   generateRsaKeyPair,
   rsaEncrypt,
@@ -7,14 +6,14 @@ import {
   generatePwdKey,
   generateUserKey,
   generateChannelKey,
-  getIv,
+  generateIv,
   aesEncrypt,
   aesDecrypt
 } from './lowLevelEncryption';
 
 function encryptMsg(message, channelKey) {
   if (channelKey) {
-    message.iv = getIv();
+    message.iv = generateIv();
     message._text = aesEncrypt(message.text, channelKey, message.iv);
   } else {
     message._text = message.text;
@@ -45,12 +44,12 @@ function generateSignKeyPair() {
 function encryptUserKey(userKey, pwdKey, iv) {
   // TODO: подумать над iv
   if (!iv) throw Error('iv undefined')
-  return aesEncrypt(userKey, pwdKey);
+  return aesEncrypt(userKey, pwdKey, iv);
 }
 
 function decryptUserKey(userKey, pwdKey, iv) {
   if (!iv) throw Error('iv undefined')
-  return aesDecrypt(userKey, pwdKey);
+  return aesDecrypt(userKey, pwdKey, iv);
 }
 
 function encryptChannelKey(channelKey, pubKey) {
@@ -59,16 +58,6 @@ function encryptChannelKey(channelKey, pubKey) {
 
 function decryptChannelKey(channelKey, privKey) {
   return rsaDecrypt(channelKey, privKey);
-}
-
-// TODO: понять, нужна ли эта функция
-function encryptSubchannelKey(childChannelKey, parantChannelKey) {
-  return aesEncrypt(childChannelKey, parantChannelKey);
-}
-
-// TODO: понять, нужна ли эта функция
-function decryptSubchannelKey(childChannelKey, parantChannelKey) {
-  return aesDecrypt(childChannelKey, parantChannelKey);
 }
 
 function encryptKeyPair(keypair, userKey) {
@@ -94,8 +83,6 @@ export {
   decryptUserKey,
   encryptChannelKey,
   decryptChannelKey,
-  encryptSubchannelKey,
-  decryptSubchannelKey,
   encryptKeyPair,
   decryptKeyPair,
 }
