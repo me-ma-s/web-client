@@ -7,7 +7,7 @@ async function getMessages(req, res) {
 
     const { rows } = await client.query(`
       SELECT * FROM messages WHERE channel_id=${channel_id}
-      ORDER BY date_time DESC
+      ORDER BY date_time ASC
     `);
 
     res.send(rows);

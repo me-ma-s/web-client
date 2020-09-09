@@ -4,7 +4,7 @@ const handleError = require('./handleError');
 async function getAllUsers(req, res) {
   try {
     const { rows } = await client.query(`
-      SELECT * FROM users ORDER BY users.id DESC
+      SELECT * FROM users ORDER BY users.id ASC
     `);
 
     res.send(rows);

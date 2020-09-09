@@ -4,7 +4,7 @@ const handleError = require('./handleError');
 async function getAllChannels(req, res) {
   try {
     const { rows } = await client.query(`
-      SELECT channels.* FROM channels ORDER BY id DESC`);
+      SELECT channels.* FROM channels ORDER BY id ASC`);
 
     res.send(rows);
 
