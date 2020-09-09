@@ -54,4 +54,4 @@ async function logToPostgres(req, queryTime) {
   }
 }
 
-module.exports.logger = putQueryTime(log);
+module.exports = putQueryTime(log);
