@@ -1,9 +1,8 @@
-import React,{useLayoutEffect,useState,useEffect} from 'react';
+import React, { useLayoutEffect, useState, useEffect } from 'react';
 import styled from 'styled-components'
 import Header from './header'
 
-import { getQuery } from '../services/query-service'
-import { postQuery } from '../services/query-service'
+import { getQuery, postQuery} from '../services/query-service'
 
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
@@ -56,29 +55,33 @@ const Block = styled.div`
   height : 100%;
 `;
 
+import { encryptMsg, generateChannelKey,  } from '../services/encryption/highLevelEncryption';
+// TODO: это временное решение, нужно вытаскивать ключ с сервера
+const defaultChannelKey = generateChannelKey();
 
-const ChatContent = ({id}) => {
 
-  const [ messages , setMessages] = useState([])
-  const [ text , setText] = useState('')
-  const [ timer , setTimer] = useState(null)
-  
-  useEffect(()=>{
-    setMessages([]);
+const ChatContent = ({ id }) => {
+
+  const [messages, setMessages] = useState([])
+  const [text, setText] = useState('')
+  const [timer, setTimer] = useState(null)
+
+  useEffect(() => {
     clearTimeout(timer);
-    getQuery('/getMessages/',{channel_id : id}).then( (data)=>{setMessages(data)})
-    setTimer(setInterval(()=>{getMessage(id)}, 10000))
-  },[id])
+    getMessage(id)
+    setTimer(setInterval(() => { getMessage(id) }, 10000))
+  }, [id])
 
-  const getMessage = (id)=>{
+  const getMessage = (id) => {
+    console.log('Timeout:::', id)
     setMessages([]);
-    console.log('Timeout:::',id)
-    getQuery('/getMessages/',{channel_id : id}).then( (data)=>{setMessages(data)})
+    getQuery('/getMessages/', { channel_id: id }).then((data) => { setMessages(data) })
   }
 
-  const GetListItem = (el)=>{
-    return( 
-      <ListItem  key={el.id}>
+
+  const GetListItem = (el) => {
+    return (
+      <ListItem key={el.id}>
         <ListItemText>
           {el._text}
         </ListItemText>
@@ -86,38 +89,43 @@ const ChatContent = ({id}) => {
     )
   }
 
-  const Send = () =>{
-    postQuery('/postMessage',{ 
-      channel_id : id,
-      user_id : 3, ///TODO: заменить на ...
-      _text : text
-     }).then( (data)=>{setText('')})
+  const Send = () => {
+    let msg = {
+      channel_id: id,
+      user_id: 3, ///TODO: заменить на ...
+      _text: text
+    };
+    setText('');
+    // msg = encryptMsg(msg, defaultChannelKey);
+    console.log('MSG:::',msg)
+    postQuery('/postMessage', msg).then((data) => { })
   }
 
   return (
     <Block>
       <HeaderContainer>
-          <Header/>
+        <Header />
       </HeaderContainer>
       <Root>
         <ListContainer>
           <List>
-            {messages.map( (el)=>GetListItem(el))}
+            {messages.map((el) => GetListItem(el))}
           </List>
         </ListContainer>
         <InputContainer>
-          <StTextareaAutosize 
-            value={text} 
-            rowsMax={10} 
+          <StTextareaAutosize
+            value={text}
+            rowsMax={10}
             rowsMin={3}
-            onKeyDown={(e)=>{
-              if(e.key === 'Enter'){
-                Send()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                Send()
+              }
             }}
-            onChange={(e)=>{
+            onChange={(e) => {
               setText(e.target.value)
             }}
-            />
+          />
         </InputContainer>
       </Root>
     </Block>

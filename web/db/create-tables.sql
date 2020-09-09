@@ -43,7 +43,8 @@ CREATE TABLE messages (
   user_id         BIGINT     NOT NULL      REFERENCES users(id),
   answer_to_id    INT        DEFAULT NULL  REFERENCES messages(id),
   date_time       TIMESTAMP  NOT NULL      DEFAULT current_timestamp,
-  _text           TEXT   NOT NULL
+  _text           TEXT   NOT NULL,
+  iv              TEXT
 );
 
 -- CREATE TABLE attachments (
