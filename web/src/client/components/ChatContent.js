@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState, useEffect } from 'react';
 import styled from 'styled-components'
 import Header from './header'
 
-import { getQuery, postQuery} from '../services/query-service'
+import { getQuery, postQuery } from '../services/query-service'
 
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
@@ -44,7 +44,7 @@ const StTextareaAutosize = styled(TextareaAutosize)`
   padding : 10px 2% 10px 2%;
   vertical-align: bottom;
   width : 100%;
-  align-item : center;
+  align-items : center;
 `;
 
 const HeaderContainer = styled.div`
@@ -55,7 +55,7 @@ const Block = styled.div`
   height : 100%;
 `;
 
-import { encryptMsg, generateChannelKey,  } from '../services/encryption/highLevelEncryption';
+import { encryptMsg, decryptMsg, generateChannelKey } from '../services/encryption/highLevelEncryption';
 // TODO: это временное решение, нужно вытаскивать ключ с сервера
 const defaultChannelKey = generateChannelKey();
 
@@ -69,13 +69,17 @@ const ChatContent = ({ id }) => {
   useEffect(() => {
     clearTimeout(timer);
     getMessage(id)
-    setTimer(setInterval(() => { getMessage(id) }, 10000))
+    setTimer(setInterval(() => { getMessage(id) }, 3000))
   }, [id])
 
-  const getMessage = (id) => {
-    console.log('Timeout:::', id)
+  const getMessage = (channel_id) => {
+    console.log('Timeout:::', channel_id)
     setMessages([]);
-    getQuery('/getMessages/', { channel_id: id }).then((data) => { setMessages(data) })
+    getQuery('/getMessages/', { channel_id })
+      .then((msgArr) => msgArr.map(decryptMsg))
+      .then(setMessages);
+
+    // getQuery('/getMessages/', { channel_id }).then((data) => { setMessages(data) })
   }
 
 
@@ -83,7 +87,7 @@ const ChatContent = ({ id }) => {
     return (
       <ListItem key={el.id}>
         <ListItemText>
-          {el._text}
+          {el.text}
         </ListItemText>
       </ListItem>
     )
@@ -93,12 +97,13 @@ const ChatContent = ({ id }) => {
     let msg = {
       channel_id: id,
       user_id: 3, ///TODO: заменить на ...
-      _text: text
+      text
     };
     setText('');
+    msg = encryptMsg(msg);
     // msg = encryptMsg(msg, defaultChannelKey);
-    console.log('MSG:::',msg)
-    postQuery('/postMessage', msg).then((data) => { })
+    console.log('MSG:::', msg)
+    postQuery('/postMessage', msg).then((data) => {})
   }
 
   return (

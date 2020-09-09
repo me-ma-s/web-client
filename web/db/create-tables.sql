@@ -32,7 +32,7 @@ CREATE TABLE user_in_channel (
   user_id         BIGINT  NOT NULL    REFERENCES users(id)    ON DELETE CASCADE,
   channel_id      INT     NOT NULL    REFERENCES channels(id) ON DELETE CASCADE,
   preferences     JSON,
-  user_role       JSON,  -- каждое право пользователя определяется битом в инте
+  user_role       JSON,
   _enckey_user    JSON,
   PRIMARY KEY (user_id, channel_id)
 );
