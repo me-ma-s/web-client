@@ -23,11 +23,15 @@ function rsaDecrypt(value, privKey) {
 function generatePwdKey(login, password) {
   const numIterations = 10 * 1000;
   let pwdKey = forge.pkcs5.pbkdf2(password, login, numIterations, 32);
-  return pwdKey;
+  return forge.util.bytesToHex(pwdKey);
+}
+
+function getIv() {
+  return forge.util.bytesToHex(forge.random.getBytesSync(32));
 }
 
 function generateAesKey() {
-  return forge.random.getBytesSync(32);
+  return forge.util.bytesToHex(forge.random.getBytesSync(32));
 }
 
 
@@ -44,20 +48,29 @@ function generateChannelKey() {
 
 // TODO: оптимизировать, не создавая 'cipher' каждый раз
 
-function aesEncrypt(value, key, iv) {
+function aesEncrypt(value, hexKey, hexIv) {
+  const key = forge.util.hexToBytes(hexKey);
+  const iv = forge.util.hexToBytes(hexIv);
+
   const cipher = forge.cipher.createCipher('AES-CBC', key);
-  cipher.start({ iv: iv });
+  cipher.start({ iv });
+  // cipher.update(value);
   cipher.update(forge.util.createBuffer(value));
   cipher.finish();
-  return cipher.output;
+  const hexOutput = forge.util.bytesToHex(cipher.output);
+  return hexOutput;
 }
 
 
 /*  TODO: подумать, как передавать iv. 
     Возможно, стоит сделать расшифровку сообщений отдельной функцией */
-function aesDecrypt(value, key, iv) {
+function aesDecrypt(hexValue, hexKey, hexIv) {
+  const iv = forge.util.hexToBytes(hexIv);
+  const key = forge.util.hexToBytes(hexKey);
+  const value = forge.util.hexToBytes(hexValue);
+
   let decipher = forge.cipher.createDecipher('AES-CBC', key);
-  decipher.start({ iv: iv });
+  decipher.start({ iv });
   decipher.update(forge.util.createBuffer(value));
   // decipher.update(value);
   let result = decipher.finish(); // check 'result' for true/false
@@ -75,6 +88,7 @@ export {
   generatePwdKey,
   generateUserKey,
   generateChannelKey,
+  getIv,
   aesEncrypt,
   aesDecrypt
 }
