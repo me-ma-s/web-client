@@ -33,7 +33,7 @@ const StSettingsIcon = styled(SettingsIcon)`
 
 const StListItem = styled(ListItem)`
   :hover{
-    background-color : rgba(0,0,0,0.05);
+    background-color : rgba(100,100,120,0.05);
     & > li{
       background-color : transparent;
     }
@@ -48,15 +48,14 @@ const StListItem = styled(ListItem)`
 `
 const StListSubheader = styled(ListSubheader)`
   font-size : 25px;
-  align-self: center;
-  vertical-align: middle;
+  align-self: center !important;
+  vertical-align: middle !important;
+  text-align:center !important;
   color : #607d8b;
   :hover{
     background-color : rgba(0,0,0,0.1);
     font-size : 32px;
-    color : #757575;
-    align-self: center;
-    vertical-align: middle;
+    color : #1976d2;
     transition-property: font-size, color ;
     transition-timing-function: cubic-bezier(0.1, 0.9, 0.1, 1);
     transition-duration: 100ms;
