@@ -15,7 +15,7 @@
     "db-role": "psql -f db/create-role.sql messenger",
     "db-tables": "psql -f db/create-tables.sql messenger",
     "api-test": "node tests/api/channels.js && node tests/api/users.js && node tests/api/user_in_channel.js && node tests/api/messages.js",
-    "db": "npm run db-drop > /dev/null; npm run db-role 2> /dev/null; npm run db-create && npm run db-tables && npm run api-test"
+    "db": "npm run db-role 2> /dev/null; npm run db-create && npm run db-tables && npm run api-test"
   },
   "dependencies": {
     "@babel/cli": "7.2.3",

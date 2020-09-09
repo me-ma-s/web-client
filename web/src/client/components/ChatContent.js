@@ -76,8 +76,9 @@ const ChatContent = ({ id }) => {
     console.log('Timeout:::', channel_id)
     setMessages([]);
     getQuery('/getMessages/', { channel_id })
-      .then((msgArr) => msgArr.map(decryptMsg))
-      .then(setMessages);
+      .then((msgArr) => msgArr.map((msg) => decryptMsg(msg, defaultChannelKey)))
+      .then(setMessages)
+      .catch(console.log);
 
     // getQuery('/getMessages/', { channel_id }).then((data) => { setMessages(data) })
   }
@@ -100,7 +101,7 @@ const ChatContent = ({ id }) => {
       text
     };
     setText('');
-    msg = encryptMsg(msg);
+    msg = encryptMsg(msg, defaultChannelKey);
     // msg = encryptMsg(msg, defaultChannelKey);
     console.log('MSG:::', msg)
     postQuery('/postMessage', msg).then((data) => {})

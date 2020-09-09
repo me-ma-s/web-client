@@ -12,10 +12,11 @@ import {
 } from './lowLevelEncryption';
 
 function encryptMsg(message, channelKey) {
-  if (channelKey){
+  if (channelKey) {
     const iv = forge.random.getBytesSync(32);
+    console.log('enc iv ' + iv.length); //////
     message.iv = forge.util.bytesToHex(iv);
-    message._text = aesEncrypt(message.text, channelKey, message.iv);
+    message._text = aesEncrypt(message.text, channelKey, iv);
   } else {
     message._text = message.text;
   }
@@ -24,8 +25,12 @@ function encryptMsg(message, channelKey) {
 }
 
 function decryptMsg(message, channelKey) {
+  // if (false) {
+  console.log('chKey: ' + channelKey)
+  console.log('chKey length: ' + channelKey.length)
   if (message.iv) {
     const iv = forge.util.hexToBytes(message.iv);
+    console.log('dec iv ' + iv.length); //////
     message.text = aesDecrypt(message._text, channelKey, iv);
   } else {
     message.text = message._text;
@@ -88,7 +93,7 @@ export {
 
   encryptMsg,
   decryptMsg,
-  
+
   encryptUserKey,
   decryptUserKey,
   encryptChannelKey,
