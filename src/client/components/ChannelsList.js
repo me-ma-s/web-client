@@ -48,6 +48,8 @@ const StListItem = styled(ListItem)`
 `
 const StListSubheader = styled(ListSubheader)`
   font-size : 25px;
+  padding-right : 12.5px;
+  padding-left : 8px;
   align-self: center !important;
   vertical-align: middle !important;
   text-align:center !important;
@@ -55,26 +57,95 @@ const StListSubheader = styled(ListSubheader)`
   :hover{
     background-color : rgba(0,0,0,0.1);
     font-size : 32px;
-    color : #1976d2;
-    transition-property: font-size, color ;
+    padding-right : 8px;
+    color : #546e7a;
+    transition-property: font-size, color, padding-right, vertical-align , align-self,text-align ;
     transition-timing-function: cubic-bezier(0.1, 0.9, 0.1, 1);
     transition-duration: 100ms;
     transition-delay: 0ms;
   }
 `
 
+const StAvatar = styled(Avatar)`
+  background : ${props => props.cl};
+  color : white;
+`;
+
 
 
 const ChannelsList = ({searchWord,cb}) => {
 
   const [ channels, setChannels ] = useState([]);
+  
+  
+  const [ colorSet, setColorSet ] = useState({});
+  const updateColorSet = ( obj ) => {
+    for ( let key in obj){
+      if ( colorSet[key] === undefined){
+        setColorSet({...colorSet,...{[key]:ColorArray[Math.floor(Math.random() * (ColorArray.length + 1))]}})
+      }
+    }
+  }
+
+  const ColorArray=[
+     '#f44336',
+     '#d32f2f',
+     '#ff1744',
+     '#c51162',
+     '#ff4081',
+     '#880e4f',
+     '#d81b60',
+     '#ec407a',
+     '#ab47bc',
+     '#7b1fa2',
+     '#4a148c',
+     '#d500f9',
+     '#aa00ff',
+     '#6200ea',
+     '#7c4dff',
+     '#5e35b1',
+     '#304ffe',
+     '#536dfe',
+     '#3949ab',
+     '#2979ff',
+     '#2196f3',
+     '#00b0ff',
+     '#00e5ff',
+     '#0097a7',
+     '#26a69a',
+     '#00796b',
+     '#1de9b6',
+     '#66bb6a',
+     '#2e7d32',
+     '#00c853',
+     '#7cb342',
+     '#33691e',
+     '#cddc39',
+     '#9e9d24',
+     '#f57f17',
+     '#fdd835',
+     '#ffc107',
+     '#ff6f00',
+     '#fb8c00',
+     '#ff6d00',
+     '#dd2c00',
+     '#ff5722',
+     '#6d4c41',
+     '#546e7a'
+  ]
 
   useEffect( ()=>{
     getQuery('/getAllChannels').then( (data)=>{setChannels(data)})
   },[])
 
+  
+
   const ChannelElement = (el)=>{
     let posArray=[];
+
+    updateColorSet({
+      [el.name] : ColorArray[Math.floor(Math.random() * (ColorArray.length + 1))]
+    })
 
     if ( searchWord === '') {
       posArray=[{
@@ -110,9 +181,16 @@ const ChannelsList = ({searchWord,cb}) => {
       
     }
     
+
+
     return(
       [
         <StListItem button={true} onClick={()=>{cb(el.id)}} key={el.id}>
+            <ListItemAvatar>
+              <StAvatar variant={'rounded'} cl={colorSet[el.name]} src={el.avatar_url}> 
+                {el.name.slice(0,2)}
+              </StAvatar>
+            </ListItemAvatar>
             <ListItemText>
               <StT>
                 { posArray.map( (elem,index)=>!elem.textColor? elem.textToken : <YellowBack  key={index}>{elem.textToken}</YellowBack>)}
