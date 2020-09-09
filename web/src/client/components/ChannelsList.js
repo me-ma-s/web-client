@@ -11,6 +11,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 
 import Typography from '@material-ui/core/Typography';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 
 const StLst = styled(List)`
@@ -25,6 +26,43 @@ const YellowBack = styled.span`
 const StT = styled(Typography)`
   font-size : 18px;
 `;
+
+const StSettingsIcon = styled(SettingsIcon)`
+  font-size : inherit;
+`;
+
+const StListItem = styled(ListItem)`
+  :hover{
+    background-color : rgba(0,0,0,0.05);
+    & > li{
+      background-color : transparent;
+    }
+  }
+  & > li{
+    background-color : transparent;
+  }
+  transition-property: background-color;
+  transition-timing-function: cubic-bezier(0.1, 0.1, 0.1, 1);
+  transition-duration: 150ms;
+  transition-delay: 0ms;
+`
+const StListSubheader = styled(ListSubheader)`
+  font-size : 25px;
+  align-self: center;
+  vertical-align: middle;
+  color : #607d8b;
+  :hover{
+    background-color : rgba(0,0,0,0.1);
+    font-size : 32px;
+    color : #757575;
+    align-self: center;
+    vertical-align: middle;
+    transition-property: font-size, color ;
+    transition-timing-function: cubic-bezier(0.1, 0.9, 0.1, 1);
+    transition-duration: 100ms;
+    transition-delay: 0ms;
+  }
+`
 
 
 
@@ -75,13 +113,16 @@ const ChannelsList = ({searchWord,cb}) => {
     
     return(
       [
-        <ListItem onClick={()=>{cb(el.id)}} key={el.id}>
+        <StListItem button={true} onClick={()=>{cb(el.id)}} key={el.id}>
             <ListItemText>
               <StT>
                 { posArray.map( (elem,index)=>!elem.textColor? elem.textToken : <YellowBack  key={index}>{elem.textToken}</YellowBack>)}
               </StT>
             </ListItemText>
-        </ListItem>,
+            <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();console.log('ItME')}}>
+              <StSettingsIcon/>
+            </StListSubheader>
+        </StListItem>,
         <Divider key={`Divider${el.id}`}/>
       ]
     )

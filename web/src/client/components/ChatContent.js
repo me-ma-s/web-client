@@ -27,7 +27,7 @@ const ChatContent = ({id}) => {
 
   const GetListItem = (el)=>{
     return( 
-      <ListItem key={el.id}>
+      <ListItem  key={el.id}>
         <ListItemText>
           {el._text}
         </ListItemText>
