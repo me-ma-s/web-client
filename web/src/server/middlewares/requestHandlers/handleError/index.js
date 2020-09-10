@@ -1,6 +1,6 @@
-function handleError(err, res) {
-  console.log(err.stack);
-  res.send("Error: " + err.stack);
+function handleError(error, res) {
+  console.log(error.stack);
+  res.send({error: error.stack});
 }
 
 module.exports = handleError;
