@@ -11,6 +11,7 @@ async function getChannelsOfUser(req, res) {
         INNER JOIN user_in_channel uic ON (uic.channel_id = channels.id)
         LEFT OUTER JOIN keys ON (channels.key_id = keys.id)
       WHERE uic.user_id=${user_id}
+      ORDER BY id ASC
     `);
 
     res.send(rows);

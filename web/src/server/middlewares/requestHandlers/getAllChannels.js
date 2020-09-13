@@ -6,7 +6,8 @@ async function getAllChannels(req, res) {
     const { rows } = await client.query(`
       SELECT channels.*, keys.key AS channel_key 
       FROM channels LEFT OUTER JOIN keys ON (channels.key_id = keys.id)
-      ORDER BY id ASC`);
+      ORDER BY id ASC
+    `);
 
     res.send(rows);
 
