@@ -7,14 +7,23 @@ DROP TABLE IF EXISTS channels;
 -- DROP TABLE IF EXISTS attachments;
 
 DROP TYPE IF EXISTS key_type;
-
+CREATE TYPE key_type AS ENUM ('user_key', 'channel_key', 'sign_pub_key', 'sign_priv_key', 'pub_key', 'priv_key' );
+-- TODO: Подумать, как можно оптимизировать
+CREATE TABLE keys (
+  id    SERIAL PRIMARY KEY,
+  key   TEXT,
+  iv    TEXT,
+  -- user_id BIGSERIAL REFERENCES users(id),
+  -- channel_id 
+  type  key_type
+);
 
 CREATE TABLE channels (
   id              BIGSERIAL  PRIMARY KEY,
   name            TEXT       NOT NULL,
   avatar_url      TEXT       DEFAULT 'https://static.wikia.nocookie.net/dogelore/images/9/97/Doge.jpg/revision/latest/top-crop/width/360/height/450?cb=20190205113053',
   description     TEXT,
-  key_id          BIGINT,
+  key_id          BIGINT     REFERENCES keys(id), -- TODO: сделать отдельный ключ для каждого пользователя
   reload_interval INT        DEFAULT 30000
 );
 
@@ -27,17 +36,6 @@ CREATE TABLE users (
   pubkey          BYTEA, -- NOT NULL UNIQUE
   _privkey        BYTEA, -- NOT NULL
   avatar_url  	  TEXT      DEFAULT 'https://i.ytimg.com/vi/tWE_2HySBhc/hqdefault.jpg'
-);
-
-CREATE TYPE key_type AS ENUM ('user_key', 'channel_key', 'sign_pub_key', 'sign_priv_key', 'pub_key', 'priv_key' );
--- TODO: Подумать, как можно оптимизировать
-CREATE TABLE keys (
-  id    SERIAL PRIMARY KEY,
-  key   TEXT,
-  iv    TEXT,
-  -- user_id BIGSERIAL REFERENCES users(id),
-  -- channel_id 
-  type  key_type
 );
 
 CREATE TABLE user_in_channel (

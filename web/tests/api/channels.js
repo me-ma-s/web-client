@@ -1,10 +1,6 @@
-const { generateChannelKey } = require('../../src/client/services/encryption/lowLevelEncryption');
 const { createPostFunc, get } = require('./functions');
 
 const postChannel = createPostFunc('postChannel');
-const postKey = createPostFunc('postKey');
-
-const channel_key = generateChannelKey();
 
 const channels = [
   { name: 'Канал 1', reload_interval: 5000 },
