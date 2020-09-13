@@ -6,7 +6,9 @@ async function getChannel(req, res) {
     const channel_id = req.query.channel_id;
 
     const { rows } = await client.query(`
-      SELECT * FROM channels WHERE id=${channel_id}
+      SELECT channels.*, keys.key AS channel_key
+        FROM channels LEFT OUTER JOIN keys ON (channels.key_id = keys.id)
+        WHERE channels.id=${channel_id}
     `);
 
     res.send(rows[0]);
