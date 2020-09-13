@@ -21,7 +21,7 @@ CREATE TABLE keys (
 CREATE TABLE channels (
   id              BIGSERIAL  PRIMARY KEY,
   name            TEXT       NOT NULL,
-  avatar_url      TEXT       DEFAULT 'https://static.wikia.nocookie.net/dogelore/images/9/97/Doge.jpg/revision/latest/top-crop/width/360/height/450?cb=20190205113053',
+  avatar_url      TEXT       DEFAULT 'https://static.wikia.nocookie.net/dogelore/images/9/97/Doge.jpg/revision/latest/top-crop/width/360/height/450?cb=2019020511305',
   description     TEXT,
   key_id          BIGINT     REFERENCES keys(id), -- TODO: сделать отдельный ключ для каждого пользователя
   reload_interval INT        DEFAULT 30000
