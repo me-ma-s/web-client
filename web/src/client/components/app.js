@@ -5,6 +5,8 @@ import Chat from './pages/chat'
 
 const App = () => {
 
+  document.body.style.minWidth = '1px'
+
   return (
 	  <Switch>
       <Route
