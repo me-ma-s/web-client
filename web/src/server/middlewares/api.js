@@ -9,6 +9,8 @@ const { postMessage } = require("./requestHandlers/postMessage");
 const { getChannel } = require("./requestHandlers/getChannel");
 const { postChannel } = require("./requestHandlers/postChannel");
 const { getAllUsers } = require("./requestHandlers/getAllUsers");
+const { getKey } = require("./requestHandlers/getKey");
+const { postKey } = require("./requestHandlers/postKey");
 
 module.exports = function setupApiRoutes(app) {
   //channels
@@ -31,4 +33,8 @@ module.exports = function setupApiRoutes(app) {
   // app.post('/api/channels/:channelId/users/:userId', postUserInChannel);
   app.get('/api/getUsersOfChannel', getUsersOfChannel);
   app.get('/api/getChannelsOfUser', getChannelsOfUser);
+
+  // keys
+  app.get('/api/getKey', getKey);
+  app.post('/api/postKey', postKey);
 };

@@ -14,6 +14,7 @@ CREATE TABLE channels (
   name            TEXT       NOT NULL,
   avatar_url      TEXT       DEFAULT 'https://static.wikia.nocookie.net/dogelore/images/9/97/Doge.jpg/revision/latest/top-crop/width/360/height/450?cb=20190205113053',
   description     TEXT,
+  key_id          BIGINT,
   reload_interval INT        DEFAULT 30000
 );
 
@@ -28,12 +29,23 @@ CREATE TABLE users (
   avatar_url  	  TEXT      DEFAULT 'https://i.ytimg.com/vi/tWE_2HySBhc/hqdefault.jpg'
 );
 
+CREATE TYPE key_type AS ENUM ('user_key', 'channel_key', 'sign_pub_key', 'sign_priv_key', 'pub_key', 'priv_key' );
+-- TODO: Подумать, как можно оптимизировать
+CREATE TABLE keys (
+  id    SERIAL PRIMARY KEY,
+  key   TEXT,
+  iv    TEXT,
+  -- user_id BIGSERIAL REFERENCES users(id),
+  -- channel_id 
+  type  key_type
+);
+
 CREATE TABLE user_in_channel (
   user_id         BIGINT  NOT NULL    REFERENCES users(id)    ON DELETE CASCADE,
   channel_id      INT     NOT NULL    REFERENCES channels(id) ON DELETE CASCADE,
   preferences     JSON,
-  user_role       JSON,
-  _enckey_user    JSON,
+  user_role       JSON,  -- каждое право пользователя определяется битом в инте
+  channel_key_id  INT REFERENCES keys(id),
   PRIMARY KEY (user_id, channel_id)
 );
 
@@ -68,15 +80,4 @@ CREATE TABLE logs (
   ip          TEXT,
   url         TEXT,
   domain      TEXT
-);
-
-
-
-CREATE TYPE key_type AS ENUM ('unlock_key', 'channel_key', 'sign_pub_key', 'sign_priv_key', 'pub_key', 'priv_key' );
-
--- Подумать, как можно оптимизировать
-CREATE TABLE keys (
-  id BIGSERIAL PRIMARY KEY,
-  user_id BIGSERIAL REFERENCES users(id),
-  type key_type
 );
