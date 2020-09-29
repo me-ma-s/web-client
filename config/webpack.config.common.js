@@ -1,7 +1,6 @@
 const { resolve, join } = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const postcssPresetEnv = require('postcss-preset-env');
 
 const IS_DEV = process.env.NODE_ENV !== 'production';
 
@@ -23,37 +22,6 @@ module.exports = {
       {
         test: /\.html$/,
         loader: 'html-loader'
-      },
-      {
-        test: /\.s?css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: {
-            loader: 'style-loader',
-            options: { sourceMap: IS_DEV }
-          },
-          use: [
-            {
-              loader: 'css-loader',
-              options: {
-                localIdentName: '[local]',
-                modules: true,
-                sourceMap: IS_DEV
-              }
-            },
-            {
-              loader: 'sass-loader',
-              options: { sourceMap: IS_DEV }
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                ident: 'postcss',
-                plugins: () => [postcssPresetEnv()],
-                sourceMap: IS_DEV
-              }
-            }
-          ]
-        })
       },
       {
         test: /\.(eot|ttf|woff|woff2)$/,
