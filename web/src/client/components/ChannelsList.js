@@ -12,6 +12,14 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 
 import Typography from '@material-ui/core/Typography';
 import SettingsIcon from '@material-ui/icons/Settings';
+import CloseIcon from '@material-ui/icons/Close';
+import CheckIcon from '@material-ui/icons/Check';
+
+
+import { FormControl } from '@material-ui/core';
+import { InputLabel } from '@material-ui/core';
+import { Input } from '@material-ui/core';
+
 
 
 const StLst = styled(List)`
@@ -29,11 +37,28 @@ const StT = styled(Typography)`
 
 const StSettingsIcon = styled(SettingsIcon)`
   font-size : inherit;
+  :hover{
+    color : #42a5f5;
+  }
+`;
+
+const StCheckIcon = styled(CheckIcon)`
+  font-size : inherit;
+  :hover{
+    color : #66bb6a;
+  }
+`;
+
+const StCloseIcon = styled(CloseIcon)`
+  font-size : inherit;
+  :hover{
+    color : #ef5350;
+  }
 `;
 
 const StListItem = styled(ListItem)`
   :hover{
-    background-color : rgba(100,100,120,0.05);
+    background-color : rgba(100,100,120,0);
     & > li{
       background-color : transparent;
     }
@@ -42,25 +67,35 @@ const StListItem = styled(ListItem)`
     background-color : transparent;
   }
   transition-property: background-color;
-  transition-timing-function: cubic-bezier(0.1, 0.1, 0.1, 1);
+  transition-timing-function: cubic-bezier(0.0, 0.0, 1.0, 1.0);
   transition-duration: 150ms;
   transition-delay: 0ms;
 `
+const MiniBox = styled.div`
+  display:flex;
+  width : 96px !important;
+  padding : 0;
+  margin : 0;
+  justify-content: space-between;
+  :hover{
+    background-color : none;  
+  }
+  transition-property: justify-content, background-color ;
+  transition-timing-function: cubic-bezier(0.0, 0.0, 1, 1);
+  transition-duration: 100ms;
+  transition-delay: 0ms;
+`;
+
 const StListSubheader = styled(ListSubheader)`
   font-size : 25px;
-  padding-right : 12.5px;
-  padding-left : 8px;
-  align-self: center !important;
-  vertical-align: middle !important;
-  text-align:center !important;
+  padding : 0px 2px !important;
   color : #607d8b;
   :hover{
-    background-color : rgba(0,0,0,0.1);
+    background-color : rgba(200,200,210,0);
     font-size : 32px;
-    padding-right : 8px;
     color : #546e7a;
     transition-property: font-size, color, padding-right, vertical-align , align-self,text-align ;
-    transition-timing-function: cubic-bezier(0.1, 0.9, 0.1, 1);
+    transition-timing-function: cubic-bezier(0.0, 0.0, 1.0, 0.1);
     transition-duration: 100ms;
     transition-delay: 0ms;
   }
@@ -71,9 +106,13 @@ const StAvatar = styled(Avatar)`
   color : white;
 `;
 
+const StFormControl = styled(FormControl)`
+  width : 95%;
+
+`;
 
 
-const ChannelsList = ({searchWord,cb}) => {
+const ChannelsList = ({searchWord,cb,addCh,ch}) => {
 
   const [ channels, setChannels ] = useState([]);
   
@@ -205,6 +244,39 @@ const ChannelsList = ({searchWord,cb}) => {
     )
   }
 
+  const SpecialAddingListElement = () =>{
+    return(
+      [
+        <StListItem button={true} key={'ADDINGLIST'}>
+            <ListItemAvatar>
+              <StAvatar variant={'rounded'} cl='lightgrey'> 
+                ???
+              </StAvatar>
+            </ListItemAvatar>
+            <ListItemText>
+              <StFormControl>
+                <InputLabel> Название канала </InputLabel>
+                <Input/>
+              </StFormControl>
+            </ListItemText>
+            <MiniBox>
+              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();addCh(true)}}>
+                <StCheckIcon/>
+              </StListSubheader>
+              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();addCh(false)}}>
+                <StCloseIcon/>
+              </StListSubheader>
+              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();}}>
+                <StSettingsIcon/>
+              </StListSubheader>
+            </MiniBox>
+        </StListItem>,
+        <Divider key={`DividerADDING`}/>
+      ]
+    )
+
+  }
+
   const SortElement = (el1,el2)=>{
     if (el1.name > el2.name) return 1; 
     if (el1.name == el2.name) return 0; 
@@ -226,6 +298,13 @@ const ChannelsList = ({searchWord,cb}) => {
 
   return(
     <StLst>
+      {
+        ch 
+        ?
+        SpecialAddingListElement()
+        :
+        null
+      }
       { channels.sort( (el1,el2)=> searchWord == '' ? SortElement(el1,el2) : SortElementWithSW(el1,el2))
               .map( (el)=>ChannelElement(el)) }
     </StLst>

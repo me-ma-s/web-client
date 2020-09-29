@@ -13,6 +13,7 @@ const { getKey } = require("./requestHandlers/getKey");
 const { postKey } = require("./requestHandlers/postKey");
 
 module.exports = function setupApiRoutes(app) {
+
   //channels
   app.post('/api/postChannel', postChannel);
   app.get('/api/getAllChannels', getAllChannels);
