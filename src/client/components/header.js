@@ -44,7 +44,8 @@ const Root = styled.header`
   padding : 0% 2% 0% 2%;
   width: 100%;
   background-color : #1976d2;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 3px -1px, rgba(0, 0, 0, 0.2) 0px 2px 2px 0px, rgba(0, 0, 0, 0.2) 0px 1px 3px 0px;
+  border : solid 1px #1976d2;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px -1px, rgba(0, 0, 0, 0.1) 0px 1px 1px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
   color: #fff;
   position: relative;
 `;
