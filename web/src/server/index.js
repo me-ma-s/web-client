@@ -1,12 +1,9 @@
 const http = require('http');
-const express = require('express');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const setupApiRoutes = require('./middlewares/api');
-const logger = require('./services/logger');
+const app = require('express')();
+const proxy = require('express-http-proxy');
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-process.env.HTTP_PORT = process.env.HTTP_PORT || 30303;
+process.env.HTTP_PORT = process.env.HTTP_PORT || 30002;
 
 function onUnhandledRejection(err) {
   console.log('APPLICATION ERROR:', err);
@@ -23,19 +20,13 @@ process.on('uncaughtException', onUnhandledException);
 const setupAppRoutes =
   process.env.NODE_ENV === 'development' ? require('./middlewares/development') : require('./middlewares/production');
 
-const app = express();
-
 app.set('env', process.env.NODE_ENV);
-app.use(bodyParser.json());
-app.use(cookieParser());
 
-
-app.use(logger);
-try {
-  setupApiRoutes(app);
-} catch (e) {
-  console.log(e);
-}
+app.use('/', proxy('http://localhost:30001', {
+  filter: function (req, res) {
+    return req.url.startsWith('/api');
+  }
+}));
 setupAppRoutes(app);
 
 const srvr = http.createServer(app);
