@@ -21,7 +21,7 @@ function rsaDecrypt(value, privKey) {
 
 function generatePwdKey(login, password) {
   const numIterations = 10 * 1000;
-  let pwdKey = forge.pkcs5.pbkdf2(password, login, numIterations, 32);
+  const pwdKey = forge.pkcs5.pbkdf2(password, login, numIterations, 32);
   return forge.util.bytesToHex(pwdKey);
 }
 
@@ -60,11 +60,17 @@ function aesDecrypt(hexValue, hexKey, hexIv) {
   const key = forge.util.hexToBytes(hexKey);
   const value = forge.util.hexToBytes(hexValue);
 
-  let decipher = forge.cipher.createDecipher('AES-CBC', key);
+  const decipher = forge.cipher.createDecipher('AES-CBC', key);
   decipher.start({ iv });
   decipher.update(forge.util.createBuffer(value));
 
   return decipher.output.toString();
+}
+
+function sha256(string) {
+  const md = forge.md.sha256.create();
+  md.update('The quick brown fox jumps over the lazy dog');
+  return md.digest().toHex();
 }
 
 
@@ -79,5 +85,7 @@ export {
   generateChannelKey,
   generateIv,
   aesEncrypt,
-  aesDecrypt
+  aesDecrypt,
+
+  sha256
 }

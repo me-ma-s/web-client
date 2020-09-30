@@ -8,7 +8,9 @@ import {
   generateChannelKey,
   generateIv,
   aesEncrypt,
-  aesDecrypt
+  aesDecrypt,
+
+  sha256
 } from './lowLevelEncryption';
 
 function encryptMsg(message, channelKey) {
@@ -68,6 +70,11 @@ function decryptKeyPair(keypair, userKey) {
   throw Error('Функция еще не реализована');
 }
 
+function generateEmailPassHash(email, password) {
+  return sha256(email + ':' + password);
+}
+
+
 
 export {
   generatePwdKey,
@@ -85,4 +92,6 @@ export {
   decryptChannelKey,
   encryptKeyPair,
   decryptKeyPair,
+
+  generateEmailPassHash
 }
