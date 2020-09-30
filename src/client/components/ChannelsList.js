@@ -12,14 +12,6 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 
 import Typography from '@material-ui/core/Typography';
 import SettingsIcon from '@material-ui/icons/Settings';
-import CloseIcon from '@material-ui/icons/Close';
-import CheckIcon from '@material-ui/icons/Check';
-
-
-import { FormControl } from '@material-ui/core';
-import { InputLabel } from '@material-ui/core';
-import { Input } from '@material-ui/core';
-import { generateChannelKey } from '../services/encryption/highLevelEncryption';
 
 
 
@@ -43,20 +35,6 @@ const StSettingsIcon = styled(SettingsIcon)`
   }
 `;
 
-const StCheckIcon = styled(CheckIcon)`
-  font-size : inherit;
-  :hover{
-    color : #66bb6a;
-  }
-`;
-
-const StCloseIcon = styled(CloseIcon)`
-  font-size : inherit;
-  :hover{
-    color : #ef5350;
-  }
-`;
-
 const StListItem = styled(ListItem)`
   :hover{
     background-color : rgba(100,100,120,0);
@@ -72,20 +50,7 @@ const StListItem = styled(ListItem)`
   transition-duration: 150ms;
   transition-delay: 0ms;
 `
-const MiniBox = styled.div`
-  display:flex;
-  width : 96px !important;
-  padding : 0;
-  margin : 0;
-  justify-content: space-between;
-  :hover{
-    background-color : none;  
-  }
-  transition-property: justify-content, background-color ;
-  transition-timing-function: cubic-bezier(0.0, 0.0, 1, 1);
-  transition-duration: 100ms;
-  transition-delay: 0ms;
-`;
+
 
 const StListSubheader = styled(ListSubheader)`
   font-size : 25px;
@@ -107,23 +72,13 @@ const StAvatar = styled(Avatar)`
   color : white;
 `;
 
-const StFormControl = styled(FormControl)`
-  width : 95%;
-  & .MuiFormLabel-root.Mui-focused{
-    color : ${props => props.myer };
-  }
-  & .MuiInput-underline.Mui-focused:after{
-    border-bottom: 2px solid #607d8b !important;
-  }
-`;
 
 
-const ChannelsList = ({searchWord,cb,addCh,ch}) => {
+
+const ChannelsList = ({searchWord,cb}) => {
 
   const [ channels, setChannels ] = useState([]);
-  const [ channelName , setChannelName ] = useState('');
-  const [ label , setLabel ] = useState('Название канала');
-  const [ blocker , setBlocker ] = useState(false);
+  
   
   const [ colorSet, setColorSet ] = useState({});
   const updateColorSet = ( obj ) => {
@@ -134,17 +89,6 @@ const ChannelsList = ({searchWord,cb,addCh,ch}) => {
     }
   }
 
-  const AddChannel = () => {
-    channelName === ''
-    ?
-    setLabel('Введите имя')
-    :
-    postQuery('/postKey',{ key : generateChannelKey(), type : 'channel_key'})
-      .then( (data)=>{ if (data !== null) { if (data.error !== undefined) {setLabel('Ошибка шифрования')} else {postQuery('/postChannel',{ name : channelName, key_id : data.id})
-        .then( (data)=>{ if (data !== null) {  if (data.error !== undefined) {setLabel('Ошибка')} else {
-          setChannelName('');setLabel('Название канала');addCh(false);
-        }}})}}})
-  }
 
   const ColorArray=[
      '#f44336',
@@ -264,38 +208,7 @@ const ChannelsList = ({searchWord,cb,addCh,ch}) => {
     )
   }
 
-  const SpecialAddingListElement = () =>{
-    return(
-      [
-        <StListItem button={true} key={'ADDINGLIST'}>
-            <ListItemAvatar>
-              <StAvatar variant={'rounded'} cl='lightgrey'> 
-                ???
-              </StAvatar>
-            </ListItemAvatar>
-            <ListItemText>
-              <StFormControl myer={ label !== 'Название канала' ? '#ef5350' : '#607d8b' } >
-                <InputLabel error={label!=='Название канала'} > {label} </InputLabel>
-                <Input value={channelName} onChange={(e)=>{setChannelName(e.target.value)}}/>
-              </StFormControl>
-            </ListItemText>
-            <MiniBox>
-              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();AddChannel();addCh(true)}}>
-                <StCheckIcon/>
-              </StListSubheader>
-              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();setChannelName('');setLabel('Название канала');addCh(false)}}>
-                <StCloseIcon/>
-              </StListSubheader>
-              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();}}>
-                <StSettingsIcon/>
-              </StListSubheader>
-            </MiniBox>
-        </StListItem>,
-        <Divider key={`DividerADDING`}/>
-      ]
-    )
-
-  }
+ 
 
   const SortElement = (el1,el2)=>{
     if (el1.name > el2.name) return 1; 
@@ -318,13 +231,6 @@ const ChannelsList = ({searchWord,cb,addCh,ch}) => {
 
   return(
     <StLst>
-      {
-        ch 
-        ?
-        SpecialAddingListElement()
-        :
-        null
-      }
       { channels.sort( (el1,el2)=> searchWord == '' ? SortElement(el1,el2) : SortElementWithSW(el1,el2))
               .map( (el)=>ChannelElement(el)) }
     </StLst>

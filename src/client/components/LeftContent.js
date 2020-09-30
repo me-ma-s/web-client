@@ -6,10 +6,55 @@ import Tab from '@material-ui/core/Tab';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
+import { InputLabel } from '@material-ui/core';
+import { Input } from '@material-ui/core';
+import { getQuery, postQuery } from '../services/query-service'
+import { generateChannelKey } from '../services/encryption/highLevelEncryption';
+import SettingsIcon from '@material-ui/icons/Settings';
+import CloseIcon from '@material-ui/icons/Close';
+import CheckIcon from '@material-ui/icons/Check';
+import { FormControl } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
 
 import AddIcon from '@material-ui/icons/Add';
 import ChannelsList from './ChannelsList'
 
+const StSettingsIcon = styled(SettingsIcon)`
+  font-size : inherit;
+  :hover{
+    color : #42a5f5;
+  }
+`;
+
+const StCheckIcon = styled(CheckIcon)`
+  font-size : inherit;
+  :hover{
+    color : #66bb6a;
+  }
+`;
+
+const StCloseIcon = styled(CloseIcon)`
+  font-size : inherit;
+  :hover{
+    color : #ef5350;
+  }
+`;
+
+const StFormControl = styled(FormControl)`
+  width : 60%;
+  padding : 0px 10px;
+  & .MuiFormLabel-root{
+    padding : 0px 10px;
+  }
+  & .MuiFormLabel-root.Mui-focused{
+    color : ${props => props.myer };
+    padding : 0px 10px;
+  }
+  & .MuiInput-underline.Mui-focused:after{
+    border-bottom: 2px solid grey !important;
+    padding : 0px 10px;
+  }
+`;
 
 const TabsPlace = styled.div`
   flex-direction: row;
@@ -19,6 +64,25 @@ const TabsPlace = styled.div`
   color: #607d8b;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px -1px, rgba(0, 0, 0, 0.1) 0px 1px 1px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
   background-color : #f5f5f5;
+`;
+
+const FixedPart = styled.div`
+  height : ${props=>props.stt ? '160px' : '100px'};
+`;
+
+const ListPart = styled.div`
+  flex-direction: column;
+  overflow-y : auto;
+`;
+
+const AddPlace = styled.div`
+  height : 60px;
+  background-color : rgba(200,200,200, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left : 16px;
+  padding-right : 16px;
 `;
 
 const StAddIcon = styled(AddIcon)`
@@ -58,6 +122,13 @@ const AddIconArea = styled.div`
   align-item : center;
 `;
 
+const Root = styled.div`
+  display : flex;
+  overflow : none;
+  flex-direction: column;
+  height : 100%;
+`;
+
 
 const StTabs = styled(Tabs)`
   width : calc( 100% - 45px);
@@ -84,12 +155,65 @@ const StTabs = styled(Tabs)`
 `;
 
 
+const StAvatar = styled(Avatar)`
+  background : ${props => props.cl};
+  color : white;
+`;
+
+
+const MiniBox = styled.div`
+  display:flex;
+  width : 96px !important;
+  align-items: center;
+  padding : 0;
+  margin : 0;
+  justify-content: space-between;
+  :hover{
+    background-color : none;  
+  }
+  transition-property: justify-content, background-color ;
+  transition-timing-function: cubic-bezier(0.0, 0.0, 1, 1);
+  transition-duration: 100ms;
+  transition-delay: 0ms;
+`;
+
+const StListSubheader = styled.div`
+  font-size : 25px;
+  align-items: center;
+  padding : 0px 2px !important;
+  color : grey;
+  :hover{
+    background-color : rgba(200,200,210,0);
+    font-size : 32px;
+    color : #546e7a;
+    transition-property: font-size, color, padding-right, vertical-align , align-self,text-align ;
+    transition-timing-function: cubic-bezier(0.0, 0.0, 1.0, 0.1);
+    transition-duration: 100ms;
+    transition-delay: 0ms;
+  }
+`
+
 const LeftContent = ({changeChannels}) => {
 
   const [ tabsState , updateTabsState ] = useState(false)
   const [ searchState , updateSearchState] = useState('')
   const [ currentId , setCurrentId ] = useState(null)
   const [ addListElement , setAddListElement ] = useState(false);
+  const [ channelName , setChannelName ] = useState('');
+  const [ label , setLabel ] = useState('Название канала');
+  const [ blocker , setBlocker ] = useState(false);
+
+  const AddChannel = () => {
+    channelName === ''
+    ?
+    setLabel('Введите имя')
+    :
+    postQuery('/postKey',{ key : generateChannelKey(), type : 'channel_key'})
+      .then( (data)=>{ if (data !== null) { if (data.error !== undefined) {setLabel('Ошибка шифрования')} else {postQuery('/postChannel',{ name : channelName, key_id : data.id})
+        .then( (data)=>{ if (data !== null) {  if (data.error !== undefined) {setLabel('Ошибка')} else {
+          setChannelName('');setLabel('Название канала');setAddListElement(false);
+        }}})}}})
+  }
 
   const setSearchState = ( text ) => {
     updateSearchState(text)
@@ -99,30 +223,61 @@ const LeftContent = ({changeChannels}) => {
   },[currentId])
 
   return ( 
-    <div>
-      <Header page='Left' cb={setSearchState}/>
-      <TabsPlace>
-        <AddIconArea>
-          <StIcBt onClick={()=>setAddListElement(!addListElement)}>
-            <StAddIcon />
-          </StIcBt>
-        </AddIconArea>
-        <StTabs
-          value={tabsState}
-          onChange={(e,val)=>{updateTabsState(val)}}
-        >
-          <Tab label="Каналы" value={false} />
-          <Tab label="Папки"  value={true} />
-        </StTabs>
-      </TabsPlace>
-      <Divider/>
-      { tabsState 
-        ?
-        null
-        :
-        <ChannelsList searchWord={searchState} ch={addListElement} cb={setCurrentId} addCh={setAddListElement}/>
-      }
-    </div>
+    <Root>
+      <FixedPart stt={addListElement} >
+        <Header page='Left' cb={setSearchState}/>
+        <TabsPlace>
+          <AddIconArea>
+            <StIcBt onClick={()=>setAddListElement(!addListElement)}>
+              <StAddIcon />
+            </StIcBt>
+          </AddIconArea>
+          <StTabs
+            value={tabsState}
+            onChange={(e,val)=>{updateTabsState(val)}}
+          >
+            <Tab label="Каналы" value={false} />
+            <Tab label="Папки"  value={true} />
+          </StTabs>
+        </TabsPlace>
+        <Divider/>
+        {
+          addListElement
+          ?
+          <AddPlace> 
+            <StAvatar variant={'rounded'} cl='grey'> 
+                ???
+            </StAvatar>
+            <StFormControl myer={ label !== 'Название канала' ? '#ef5350' : '#607d8b' } >
+              <InputLabel error={label!=='Название канала'} > {label} </InputLabel>
+              <Input value={channelName} onChange={(e)=>{setChannelName(e.target.value)}}/>
+            </StFormControl>
+            <MiniBox>
+              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();AddChannel();setAddListElement(true)}}>
+                <StCheckIcon/>
+              </StListSubheader>
+              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();setChannelName('');setLabel('Название канала');setAddListElement(false)}}>
+                <StCloseIcon/>
+              </StListSubheader>
+              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();}}>
+                <StSettingsIcon/>
+              </StListSubheader>
+            </MiniBox>
+            <Divider/>
+          </AddPlace>
+          :
+          null
+        }
+      </FixedPart>
+      <ListPart stt={addListElement} >
+        { tabsState 
+          ?
+          null
+          :
+          <ChannelsList searchWord={searchState} ch={addListElement} cb={setCurrentId} addCh={setAddListElement}/>
+        }
+      </ListPart>
+    </Root>
   )
 }
 
