@@ -25,7 +25,7 @@ import { generateChannelKey } from '../services/encryption/highLevelEncryption';
 
 const StLst = styled(List)`
   margin : 0;
-  padding :0;
+  padding : 0;
 `
 const YellowBack = styled.span`
   background-color : #fff59d;
@@ -109,7 +109,12 @@ const StAvatar = styled(Avatar)`
 
 const StFormControl = styled(FormControl)`
   width : 95%;
-
+  & .MuiFormLabel-root.Mui-focused{
+    color : ${props => props.myer };
+  }
+  & .MuiInput-underline.Mui-focused:after{
+    border-bottom: 2px solid #607d8b !important;
+  }
 `;
 
 
@@ -117,7 +122,8 @@ const ChannelsList = ({searchWord,cb,addCh,ch}) => {
 
   const [ channels, setChannels ] = useState([]);
   const [ channelName , setChannelName ] = useState('');
-  const [ label , setLabel ] = useState('Название канала')
+  const [ label , setLabel ] = useState('Название канала');
+  const [ blocker , setBlocker ] = useState(false);
   
   const [ colorSet, setColorSet ] = useState({});
   const updateColorSet = ( obj ) => {
@@ -131,11 +137,13 @@ const ChannelsList = ({searchWord,cb,addCh,ch}) => {
   const AddChannel = () => {
     channelName === ''
     ?
-    null
+    setLabel('Введите имя')
     :
     postQuery('/postKey',{ key : generateChannelKey(), type : 'channel_key'})
-      .then( (data)=>{ if (data !== null) {console.log('OTL1:',data);postQuery('/postChannel',{ name : channelName, key_id : data.id  })
-        .then( (data)=>{ if (data !== null) {  if (data.error !== undefined) {console.log('OTL2:',data);console.log('Error',data.error)}}})}})
+      .then( (data)=>{ if (data !== null) { if (data.error !== undefined) {setLabel('Ошибка шифрования')} else {postQuery('/postChannel',{ name : channelName, key_id : data.id})
+        .then( (data)=>{ if (data !== null) {  if (data.error !== undefined) {setLabel('Ошибка')} else {
+          setChannelName('');setLabel('Название канала');addCh(false);
+        }}})}}})
   }
 
   const ColorArray=[
@@ -266,8 +274,8 @@ const ChannelsList = ({searchWord,cb,addCh,ch}) => {
               </StAvatar>
             </ListItemAvatar>
             <ListItemText>
-              <StFormControl>
-                <InputLabel error={label!=='Название канала'} > {label}</InputLabel>
+              <StFormControl myer={ label !== 'Название канала' ? '#ef5350' : '#607d8b' } >
+                <InputLabel error={label!=='Название канала'} > {label} </InputLabel>
                 <Input value={channelName} onChange={(e)=>{setChannelName(e.target.value)}}/>
               </StFormControl>
             </ListItemText>
