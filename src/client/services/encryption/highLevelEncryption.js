@@ -25,7 +25,7 @@ function encryptMsg(message, channelKey) {
 }
 
 function decryptMsg(message, channelKey) {
-  if (message.iv) {
+  if (message.iv && channelKey) {
     message.text = aesDecrypt(message._text, channelKey, message.iv);
   } else {
     message.text = message._text;

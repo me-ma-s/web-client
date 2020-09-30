@@ -13,6 +13,7 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 
 import Typography from '@material-ui/core/Typography';
 import SettingsIcon from '@material-ui/icons/Settings';
+import { updateKeys } from '../actions/keys'
 
 
 
@@ -76,7 +77,7 @@ const StAvatar = styled(Avatar)`
 
 
 
-const ChannelsList = ({searchWord,cb,channels}) => {
+const ChannelsList = ({searchWord,cb,channels,updateKeys}) => {
   
   const [ colorSet, setColorSet ] = useState({});
   const updateColorSet = ( obj ) => {
@@ -176,11 +177,25 @@ const ChannelsList = ({searchWord,cb,channels}) => {
       
     }
     
+    const SetChannel = ()=>{
+      if(el.key_id === null){
+        updateKeys({
+          channelKey : null
+        })
+      }
+      else {
+        getQuery('/getKey',{ id : el.key_id})
+          .then((data)=>{if(data!==null){console.log({data});updateKeys({
+            channelKey : data.key
+          })}})
+      }
+      cb(el.id);
+    }
 
 
     return(
       [
-        <StListItem button={true} onClick={()=>{cb(el.id)}} key={el.id}>
+        <StListItem button={true} onClick={SetChannel} key={el.id}>
             <ListItemAvatar>
               <StAvatar variant={'rounded'} cl={colorSet[el.name]} src={el.avatar_url}> 
                 {el.name.slice(0,2)}
@@ -231,4 +246,6 @@ const ChannelsList = ({searchWord,cb,channels}) => {
 
 export default connect( (store)=>({
    channels : store.channels
-  }))(ChannelsList)
+  }),{
+    updateKeys
+  })(ChannelsList)

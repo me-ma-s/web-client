@@ -15,6 +15,8 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import Typography from '@material-ui/core/Typography';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 
+import { updateKeys } from '../actions/keys'
+
 const Root = styled.div`
   background-color : white;
   height : calc(100% - 50px);
@@ -56,11 +58,12 @@ const Block = styled.div`
 `;
 
 import { encryptMsg, decryptMsg, generateChannelKey } from '../services/encryption/highLevelEncryption';
+import { connect } from 'react-redux';
 // TODO: это временное решение, нужно вытаскивать ключ с сервера
 const defaultChannelKey = generateChannelKey();
 
 
-const ChatContent = ({ id }) => {
+const ChatContent = ({ id ,channelKey}) => {
 
   const [messages, setMessages] = useState([])
   const [text, setText] = useState('')
@@ -70,16 +73,17 @@ const ChatContent = ({ id }) => {
     clearTimeout(timer);
     getMessage(id)
     setTimer(setInterval(() => { getMessage(id) }, 3000))
-  }, [id])
+  }, [id,channelKey])
 
   const getMessage = (channel_id) => {
     console.log('Timeout:::', channel_id)
     setMessages([]);
     getQuery('/getMessages/', { channel_id })
-      .then((msgArr) => msgArr.map((msg) => decryptMsg(msg, defaultChannelKey)))
+      .then((msgArr) => msgArr.map((msg) => decryptMsg(msg, channelKey)))
       .then(setMessages)
       .catch(console.log);
   }
+
 
 
   const GetListItem = (el) => {
@@ -92,6 +96,7 @@ const ChatContent = ({ id }) => {
     )
   }
 
+
   const Send = () => {
     let msg = {
       channel_id: id,
@@ -99,7 +104,7 @@ const ChatContent = ({ id }) => {
       text
     };
     setText('');
-    msg = encryptMsg(msg, defaultChannelKey);
+    msg = encryptMsg(msg, channelKey);
     console.log('MSG:::', msg)
     postQuery('/postMessage', msg).then((data) => {})
   }
@@ -135,4 +140,8 @@ const ChatContent = ({ id }) => {
   )
 }
 
-export default ChatContent
+export default connect( (store)=>({
+    channelKey : store.keys.channelKey 
+  }),{
+    updateKeys
+  })(ChatContent)
