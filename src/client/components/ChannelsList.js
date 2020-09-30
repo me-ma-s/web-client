@@ -1,6 +1,6 @@
 import React, {useState,useEffect} from 'react';
 import styled from 'styled-components'
-import { getQuery } from '../services/query-service'
+import { getQuery, postQuery } from '../services/query-service'
 
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
@@ -19,6 +19,7 @@ import CheckIcon from '@material-ui/icons/Check';
 import { FormControl } from '@material-ui/core';
 import { InputLabel } from '@material-ui/core';
 import { Input } from '@material-ui/core';
+import { generateChannelKey } from '../services/encryption/highLevelEncryption';
 
 
 
@@ -115,7 +116,8 @@ const StFormControl = styled(FormControl)`
 const ChannelsList = ({searchWord,cb,addCh,ch}) => {
 
   const [ channels, setChannels ] = useState([]);
-  
+  const [ channelName , setChannelName ] = useState('');
+  const [ label , setLabel ] = useState('Название канала')
   
   const [ colorSet, setColorSet ] = useState({});
   const updateColorSet = ( obj ) => {
@@ -124,6 +126,16 @@ const ChannelsList = ({searchWord,cb,addCh,ch}) => {
         setColorSet({...colorSet,...{[key]:ColorArray[Math.floor(Math.random() * (ColorArray.length + 1))]}})
       }
     }
+  }
+
+  const AddChannel = () => {
+    channelName === ''
+    ?
+    null
+    :
+    postQuery('/postKey',{ key : generateChannelKey(), type : 'channel_key'})
+      .then( (data)=>{ if (data !== null) {console.log('OTL1:',data);postQuery('/postChannel',{ name : channelName, key_id : data.id  })
+        .then( (data)=>{ if (data !== null) {  if (data.error !== undefined) {console.log('OTL2:',data);console.log('Error',data.error)}}})}})
   }
 
   const ColorArray=[
@@ -255,15 +267,15 @@ const ChannelsList = ({searchWord,cb,addCh,ch}) => {
             </ListItemAvatar>
             <ListItemText>
               <StFormControl>
-                <InputLabel> Название канала </InputLabel>
-                <Input/>
+                <InputLabel error={label!=='Название канала'} > {label}</InputLabel>
+                <Input value={channelName} onChange={(e)=>{setChannelName(e.target.value)}}/>
               </StFormControl>
             </ListItemText>
             <MiniBox>
-              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();addCh(true)}}>
+              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();AddChannel();addCh(true)}}>
                 <StCheckIcon/>
               </StListSubheader>
-              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();addCh(false)}}>
+              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();setChannelName('');setLabel('Название канала');addCh(false)}}>
                 <StCloseIcon/>
               </StListSubheader>
               <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();}}>
