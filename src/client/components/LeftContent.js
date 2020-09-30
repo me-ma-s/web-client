@@ -43,7 +43,7 @@ const StCloseIcon = styled(CloseIcon)`
 `;
 
 const StFormControl = styled(FormControl)`
-  width : 60%;
+  width : 65%;
   padding : 0px 10px;
   & .MuiFormLabel-root{
     padding : 0px 10px;
@@ -69,7 +69,7 @@ const TabsPlace = styled.div`
 `;
 
 const FixedPart = styled.div`
-  height : ${props=>props.stt ? '160px' : '100px'};
+  height : ${props=>props.stt ? '170px' : '110px'};
 `;
 
 const ListPart = styled.div`
@@ -79,6 +79,8 @@ const ListPart = styled.div`
 
 const AddPlace = styled.div`
   height : 60px;
+  border : 1px solid lightgrey;
+  border-bottom : 2px solid lightgrey;
   background-color : rgba(200,200,200, 0.2);
   display: flex;
   align-items: center;

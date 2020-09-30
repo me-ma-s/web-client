@@ -15,8 +15,8 @@ const StIcBut = styled(IconButton)`
       height : 35px;
       width : 35px;
       font-size : 17px;
-      color : white;
-      background-color : orange;
+      color : grey;
+      background-color : white;
     }
   }
 
@@ -38,31 +38,44 @@ const StIcButMenu = styled(IconButton)`
 
 const Root = styled.header`
   display: flex;
-  justify-content: space-between;
+  max-width : 100%;
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+  justify-content: flex-start;
   align-items: center;
-  height: 50px;
-  padding : 0% 2% 0% 2%;
+  height: 60px;
+  padding : 0% 0% 0% 1%;
   width: 100%;
-  background-color : #1976d2;
-  border : solid 1px #1976d2;
+  background-color : #263238;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px -1px, rgba(0, 0, 0, 0.1) 0px 1px 1px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
   color: #fff;
   position: relative;
 `;
 
 const BeautySearch = styled(TextField)`
-  width : 70%;
-  height : 40px;
+  width : 60%;
+  height : 36px;
+  direction: rtl;
+  & .MuiFilledInput-root.Mui-focused {
+    transition-property: width;
+    transition-timing-function: cubic-bezier(.25,1.33,.81,-0.39);
+    transition-duration: 2020ms;
+    transition-delay: 0ms;
+    width : 150%;
+    padding-right : 100px;
+  }
   & > div{
-    height : 40px;
+    height : 60px;
     background-color : white !important;
-    border-radius: 0px;
+    border-radius: 10px;
     & .MuiInput-underline:before {
-      border-bottom: 2px solid green;
+      border-bottom: none;
     }
       & > input{
+        direction: ltr;
         padding : 0px 5%;
         font-size : 18px;
+        color: black ;
         outline : none !important;
       }
       &:after {
@@ -71,15 +84,35 @@ const BeautySearch = styled(TextField)`
   }
 `;
 
+const SmallBox = styled.div`
+  width : 40px;
+  text-align : center;
+`;
+
+
+const LastBox = styled.div`
+  width : calc(100% - 100px);
+  margin : 0px 0px 0px 10px;
+  text-align : right;
+`;
+
+
 const Header = ( { page, cb} ) => {
   return ( 
     <Root>
       { page === 'Left'
         ?
         [ 
-          <StIcButMenu key={0}> <MenuIcon/> </StIcButMenu>,
-          <StIcBut key={1}> <Avatar variant={'rounded'} >MF</Avatar></StIcBut>,
-          <BeautySearch onChange={(e)=>{cb(e.target.value)}} placeholder={'Поиск...'} key={2} variant="filled" />
+          <SmallBox key={0}>
+            <StIcButMenu > <MenuIcon/> </StIcButMenu>
+          </SmallBox>,
+          <SmallBox key={1} >
+          <StIcBut > <Avatar variant={'rounded'} >MF</Avatar></StIcBut>
+        </SmallBox>,
+          <LastBox key={2}>
+            <BeautySearch onChange={(e)=>{cb(e.target.value)}} placeholder={'Поиск...'} key={2} variant="filled" />
+          </LastBox>,
+          
         ]  
         :
         <p>Text</p>

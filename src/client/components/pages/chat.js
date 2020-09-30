@@ -44,7 +44,7 @@ const Root = styled.div`
   display : flex;
   height : 100vh;
   width : 100vw;
-  background-color : white;
+  background-color : rgba(200,200,200,0.2);
   align-items : center;
   background-color : rgba(200,200,200,0.2);
 `;

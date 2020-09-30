@@ -13,7 +13,7 @@ import { StylesProvider } from '@material-ui/core/styles';
 let theme = createMuiTheme({
   palette: {
     primary: {
-      main: '#5e35b1'
+      main: '#000000'
     }
   },
   breakpoints : {
