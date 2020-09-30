@@ -18,6 +18,8 @@ import Avatar from '@material-ui/core/Avatar';
 
 import AddIcon from '@material-ui/icons/Add';
 import ChannelsList from './ChannelsList'
+import { connect } from 'react-redux';
+import {setChannels,dropChannels,updateChannels} from '../actions/channels'
 
 const StSettingsIcon = styled(SettingsIcon)`
   font-size : inherit;
@@ -193,7 +195,7 @@ const StListSubheader = styled.div`
   }
 `
 
-const LeftContent = ({changeChannels}) => {
+const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) => {
 
   const [ tabsState , updateTabsState ] = useState(false)
   const [ searchState , updateSearchState] = useState('')
@@ -203,16 +205,26 @@ const LeftContent = ({changeChannels}) => {
   const [ label , setLabel ] = useState('Название канала');
   const [ blocker , setBlocker ] = useState(false);
 
+  useEffect(()=>{
+    getQuery('/getAllChannels').then((data)=>{if (data !== null){setChannels(data)} else (console.log('DATA_CHANNELS:',data))})
+  },[])
+
   const AddChannel = () => {
-    channelName === ''
-    ?
-    setLabel('Введите имя')
-    :
-    postQuery('/postKey',{ key : generateChannelKey(), type : 'channel_key'})
-      .then( (data)=>{ if (data !== null) { if (data.error !== undefined) {setLabel('Ошибка шифрования')} else {postQuery('/postChannel',{ name : channelName, key_id : data.id})
-        .then( (data)=>{ if (data !== null) {  if (data.error !== undefined) {setLabel('Ошибка')} else {
-          setChannelName('');setLabel('Название канала');setAddListElement(false);
-        }}})}}})
+    setBlocker(true)
+    if( channelName === ''){ 
+      setLabel('Введите имя');
+      setBlocker(false)
+    }
+    else {
+      postQuery('/postKey',{ key : generateChannelKey(), type : 'channel_key'})
+        .then( (data)=>{ if (data !== null) { if (data.error !== undefined) {setLabel('Ошибка шифрования');setBlocker(false)} else {postQuery('/postChannel',{ name : channelName, key_id : data.id})
+          .then( (data)=>{ if (data !== null) {  if (data.error !== undefined) {setLabel('Ошибка');setBlocker(false)} else {
+            setChannelName('');
+            setLabel('Название канала');
+            getQuery('/getAllChannels').then((data)=>{if (data !== null){setChannels(data)} else (console.log('DATA_CHANNELS:',data))})
+          }}})}}})
+    }
+    setBlocker(false)
   }
 
   const setSearchState = ( text ) => {
@@ -281,4 +293,8 @@ const LeftContent = ({changeChannels}) => {
   )
 }
 
-export default LeftContent
+export default connect(null,{
+  setChannels,
+  dropChannels,
+  updateChannels,
+})(LeftContent)

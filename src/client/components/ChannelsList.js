@@ -1,6 +1,7 @@
 import React, {useState,useEffect} from 'react';
 import styled from 'styled-components'
 import { getQuery, postQuery } from '../services/query-service'
+import { connect } from 'react-redux';
 
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
@@ -75,10 +76,7 @@ const StAvatar = styled(Avatar)`
 
 
 
-const ChannelsList = ({searchWord,cb}) => {
-
-  const [ channels, setChannels ] = useState([]);
-  
+const ChannelsList = ({searchWord,cb,channels}) => {
   
   const [ colorSet, setColorSet ] = useState({});
   const updateColorSet = ( obj ) => {
@@ -136,13 +134,7 @@ const ChannelsList = ({searchWord,cb}) => {
      '#6d4c41',
      '#546e7a'
   ]
-
-  useEffect( ()=>{
-    getQuery('/getAllChannels').then( (data)=>{setChannels(data)})
-  },[])
-
-  
-
+ 
   const ChannelElement = (el)=>{
     let posArray=[];
 
@@ -237,4 +229,6 @@ const ChannelsList = ({searchWord,cb}) => {
   )
 }
 
-export default ChannelsList
+export default connect( (store)=>({
+   channels : store.channels
+  }))(ChannelsList)
