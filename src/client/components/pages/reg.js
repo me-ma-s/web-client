@@ -5,15 +5,16 @@ import { FormControl } from '@material-ui/core';
 import { InputLabel } from '@material-ui/core';
 import { FilledInput } from '@material-ui/core';
 
+import {generateEmailPassHash} from '../../services/encryption/highLevelEncryption';
+
 
 import Avatar from '@material-ui/core/Avatar';
 
 const AVA = styled(Avatar)`
-  height : 30vh;
-  width : 20vw;
-  font-size : 50px;
+  height : 220px;
+  width : 200px;
+  font-size : 70px;
   margin-bottom : 4vh;
-
 `
 
 const Screen = styled.div`
@@ -34,28 +35,55 @@ const Root = styled.div`
   height : 20%;
 `;
 
+const StForm = styled(FormControl)`
+  width : 400px;
+  & > label {
+    padding-left : 10px;
+  }
+`;
+
 const Reg = () => {
 
   const [ email , setEmail ] =  useState('')
   const [ name , setName ] =  useState('')
   const [ surname , setSurname ] =  useState('')
+  const [ password , setPassword ] = useState('')
+  const [ cm_password , setCm_password ] = useState('')
+
+  const RegAct = (e) =>{
+    if (e.key === 'Enter') {
+      
+      //TODO VALIDATION!!!
+
+      console.log({email,password,hash:generateEmailPassHash(email,password)})
+
+    }
+  }
 
   return(
     <Screen>
       <Root>
         <AVA variant={'rounded'} >{ ((name.slice(0,1) || '')+(surname.slice(0,1) || '')) || 'I\'am'}</AVA>
-        <FormControl>
-          <InputLabel>Почта</InputLabel>
-          <FilledInput value={email} onChange={(e)=>setEmail(e.target.value)}></FilledInput>
-        </FormControl>
-        <FormControl>
+        <StForm>
           <InputLabel>Имя</InputLabel>
-          <FilledInput value={name} onChange={(e)=>setName(e.target.value)}></FilledInput>
-        </FormControl>
-        <FormControl>
+          <FilledInput value={name} onKeyUp={RegAct}  onChange={(e)=>setName(e.target.value)}></FilledInput>
+        </StForm>
+        <StForm>
           <InputLabel>Фамилия</InputLabel>
-          <FilledInput value={surname} onChange={(e)=>setSurname(e.target.value)}></FilledInput>
-        </FormControl>
+          <FilledInput value={surname} onKeyUp={RegAct}  onChange={(e)=>setSurname(e.target.value)}></FilledInput>
+        </StForm>
+        <StForm>
+          <InputLabel>Почта</InputLabel>
+          <FilledInput value={email} onKeyUp={RegAct} onChange={(e)=>setEmail(e.target.value)}></FilledInput>
+        </StForm>
+        <StForm>
+          <InputLabel>Пароль</InputLabel>
+          <FilledInput value={password} onKeyUp={RegAct} onChange={(e)=>setPassword(e.target.value)}></FilledInput>
+        </StForm>
+        <StForm>
+          <InputLabel>Подтверждение пароля</InputLabel>
+          <FilledInput value={cm_password} onKeyUp={RegAct} onChange={(e)=>setCm_password(e.target.value)}></FilledInput>
+        </StForm>
       </Root>
     </Screen>
   )

@@ -309,8 +309,4 @@ const ChannelsList = ({searchWord,cb,addCh,ch}) => {
   )
 }
 
-export default connect( (store)=>({
-   channels : store.channels
-  }),{
-    updateKeys
-  })(ChannelsList)
+export default ChannelsList
