@@ -9,12 +9,13 @@ import {generateEmailPassHash} from '../../services/encryption/highLevelEncrypti
 
 
 import Avatar from '@material-ui/core/Avatar';
+import { postQuery } from '../../services/query-service';
 
 const AVA = styled(Avatar)`
   height : 220px;
   width : 200px;
   font-size : 70px;
-  margin-bottom : 4vh;
+  margin-bottom : 20px;
 `
 
 const Screen = styled.div`
@@ -55,8 +56,15 @@ const Reg = () => {
       
       //TODO VALIDATION!!!
 
-      console.log({email,password,hash:generateEmailPassHash(email,password)})
-
+      postQuery('/postUser',
+        {
+          email,
+          name,
+          surname,
+          email_pass_hash:generateEmailPassHash(email,password),
+        }
+      )
+        .then( (data)=>{if(data){console.log('user:',data)} } )
     }
   }
 
