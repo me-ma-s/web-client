@@ -67,9 +67,9 @@ function aesDecrypt(hexValue, hexKey, hexIv) {
   return decipher.output.toString();
 }
 
-function sha256(string) {
+function sha256(str) {
   const md = forge.md.sha256.create();
-  md.update('The quick brown fox jumps over the lazy dog');
+  md.update(str);
   return md.digest().toHex();
 }
 
