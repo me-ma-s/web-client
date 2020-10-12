@@ -9,6 +9,7 @@ import pict from '../../../client/icon.jpg'
 
 import Button from '@material-ui/core/Button';
 import {generateEmailPassHash} from '../../services/encryption/highLevelEncryption';
+import { postQuery } from '../../services/query-service';
 
 const Screen = styled.div`
   width : 100vw;
@@ -65,7 +66,13 @@ const Auto = () => {
   }
 
   const Act = ()=>{
-    console.log('USSSER')
+    postQuery('/logIn',
+    {
+      email,
+      email_pass_hash:generateEmailPassHash(email,password),
+    }
+  )
+    .then( (data)=>{if(data){console.log('user:',data)} } )
   }
 
   return(
