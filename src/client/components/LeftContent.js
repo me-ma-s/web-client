@@ -218,13 +218,20 @@ const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) =
       setBlocker(false)
     }
     else {
-      postQuery('/postKey',{ key : generateChannelKey(), type : 'channel_key'})
-        .then( (data)=>{ if (data !== null) { if (data.error !== undefined) {setLabel('Ошибка шифрования');setBlocker(false)} else {postQuery('/postChannel',{ name : channelName, key_id : data.id})
-          .then( (data)=>{ if (data !== null) {  if (data.error !== undefined) {setLabel('Ошибка');setBlocker(false)} else {
-            setChannelName('');
-            setLabel('Название канала');
-            getQuery('/getAllChannels').then((data)=>{if (data !== null){setChannels(data)} else (console.log('DATA_CHANNELS:',data))})
-          }}})}}})
+      postQuery('/postChannel',{ name : channelName, channel_key: generateChannelKey()})
+        .then( (data)=>{ if (data !== null ) {setLabel('Ошибка');setBlocker(false)} else {
+          setChannelName('');
+          setLabel('Название канала');
+          getQuery('/getAllChannels').then((data)=>{if (data !== null){setChannels(data)} else (console.log('DATA_CHANNELS:',data))})
+        }})
+
+      // postQuery('/postKey',{ key : generateChannelKey(), type : 'channel_key'})
+      //   .then( (data)=>{ if (data !== null) { if (data.error !== undefined) {setLabel('Ошибка шифрования');setBlocker(false)} else {postQuery('/postChannel',{ name : channelName, key_id : data.id})
+      //     .then( (data)=>{ if (data !== null) {  if (data.error !== undefined) {setLabel('Ошибка');setBlocker(false)} else {
+      //       setChannelName('');
+      //       setLabel('Название канала');
+      //       getQuery('/getAllChannels').then((data)=>{if (data !== null){setChannels(data)} else (console.log('DATA_CHANNELS:',data))})
+      //     }}})}}})
     }
     setBlocker(false)
   }

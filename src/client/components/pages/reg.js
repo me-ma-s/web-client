@@ -6,7 +6,7 @@ import { InputLabel } from '@material-ui/core';
 import { FilledInput } from '@material-ui/core';
 
 import {generateEmailPassHash} from '../../services/encryption/highLevelEncryption';
-
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 import Avatar from '@material-ui/core/Avatar';
 import { postQuery } from '../../services/query-service';
@@ -50,6 +50,8 @@ const Reg = () => {
   const [ surname , setSurname ] =  useState('')
   const [ password , setPassword ] = useState('')
   const [ cm_password , setCm_password ] = useState('')
+  const [ addPictureFlag, setAddPictureFlag ] = useState(false)
+  const [ avatar , setAvatar ] = useState(null)
 
   const RegAct = (e) =>{
     if (e.key === 'Enter') {
@@ -68,10 +70,41 @@ const Reg = () => {
     }
   }
 
+  const saveAvatar = (data) =>{
+    setAvatar(data.target.files[0]);
+    let preview = document.getElementById('IMG')
+    let file    = data.target.files[0]
+    let reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+      preview.src = reader.result;
+    }, false);
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+
+  }
+
   return(
     <Screen>
       <Root>
-        <AVA variant={'rounded'} >{ ((name.slice(0,1) || '')+(surname.slice(0,1) || '')) || 'I\'am'}</AVA>
+          <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="avatarLoader"
+              multiple={false}
+              type="file"
+              onChange={saveAvatar}
+            />
+          <label htmlFor="avatarLoader">
+            <AVA variant={'rounded'} onMouseEnter={()=>{setAddPictureFlag(true)}} onMouseLeave={()=>{setAddPictureFlag(false)}}> 
+                <img id={'IMG'} src="" alt={``}/> 
+              {  
+                avatar ? null : ((name.slice(0,1) || '')+(surname.slice(0,1) || '')) || 'I\'am'                 
+              }
+            </AVA>
+          </label>
         <StForm>
           <InputLabel>Имя</InputLabel>
           <FilledInput value={name} onKeyUp={RegAct}  onChange={(e)=>setName(e.target.value)}></FilledInput>
