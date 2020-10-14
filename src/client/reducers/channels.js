@@ -7,7 +7,7 @@ const updateChannels = (state, action) => {
 
   switch (action.type) {
     case 'SET_CHANNELS':
-      return ( action.payload );
+      return action.payload ;
     case 'UPDATE_CHANNELS':
       return ([
         ...state.channels,

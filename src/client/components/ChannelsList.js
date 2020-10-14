@@ -113,9 +113,7 @@ const StFormControl = styled(FormControl)`
 `;
 
 
-const ChannelsList = ({searchWord,cb,addCh,ch}) => {
-
-  const [ channels, setChannels ] = useState([]);
+const ChannelsList = ({searchWord,cb,addCh,ch,channels}) => {
   
   
   const [ colorSet, setColorSet ] = useState({});
@@ -126,6 +124,7 @@ const ChannelsList = ({searchWord,cb,addCh,ch}) => {
       }
     }
   }
+
 
   const ColorArray=[
      '#f44336',
@@ -242,39 +241,6 @@ const ChannelsList = ({searchWord,cb,addCh,ch}) => {
     )
   }
 
-  const SpecialAddingListElement = () =>{
-    return(
-      [
-        <StListItem button={true} key={'ADDINGLIST'}>
-            <ListItemAvatar>
-              <StAvatar variant={'rounded'} cl='lightgrey'> 
-                ???
-              </StAvatar>
-            </ListItemAvatar>
-            <ListItemText>
-              <StFormControl>
-                <InputLabel> Название канала </InputLabel>
-                <Input/>
-              </StFormControl>
-            </ListItemText>
-            <MiniBox>
-              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();addCh(true)}}>
-                <StCheckIcon/>
-              </StListSubheader>
-              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();addCh(false)}}>
-                <StCloseIcon/>
-              </StListSubheader>
-              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();}}>
-                <StSettingsIcon/>
-              </StListSubheader>
-            </MiniBox>
-        </StListItem>,
-        <Divider key={`DividerADDING`}/>
-      ]
-    )
-
-  }
-
   const SortElement = (el1,el2)=>{
     if (el1.name > el2.name) return 1; 
     if (el1.name == el2.name) return 0; 
@@ -296,17 +262,14 @@ const ChannelsList = ({searchWord,cb,addCh,ch}) => {
 
   return(
     <StLst>
-      {
-        ch 
-        ?
-        SpecialAddingListElement()
-        :
-        null
-      }
       { channels.sort( (el1,el2)=> searchWord == '' ? SortElement(el1,el2) : SortElementWithSW(el1,el2))
               .map( (el)=>ChannelElement(el)) }
     </StLst>
   )
 }
 
-export default ChannelsList
+export default  connect(
+  (store)=>({
+  channels : store.channels
+})
+)(ChannelsList)

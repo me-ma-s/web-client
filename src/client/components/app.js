@@ -8,6 +8,8 @@ import Reg from './pages/reg'
 const App = () => {
 
   document.body.style.minWidth = '1px'
+  document.body.style.margin = '0px'
+  document.body.style.padding = '0px'
 
   return (
 	  <Switch>

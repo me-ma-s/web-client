@@ -83,6 +83,7 @@ const AddPlace = styled.div`
   border-bottom : 2px solid lightgrey;
   background-color : rgba(200,200,200, 0.2);
   display: flex;
+  align-items: center !important;
   align-items: center;
   justify-content: space-between;
   padding-left : 16px;
@@ -183,6 +184,7 @@ const MiniBox = styled.div`
 
 const StListSubheader = styled.div`
   font-size : 25px;
+  height: 25px;
   align-items: center;
   padding : 0px 2px !important;
   color : grey;
@@ -219,11 +221,20 @@ const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) =
     }
     else {
       postQuery('/postChannel',{ name : channelName, channel_key: generateChannelKey()})
-        .then( (data)=>{ if (data !== null ) {setLabel('Ошибка');setBlocker(false)} else {
+        .then( (data)=>{ if (data !== null ) {if (data.error !== undefined){setLabel('Ошибка');setBlocker(false)}  else {
           setChannelName('');
           setLabel('Название канала');
-          getQuery('/getAllChannels').then((data)=>{if (data !== null){setChannels(data)} else (console.log('DATA_CHANNELS:',data))})
-        }})
+          getQuery('/getAllChannels')
+          .then(
+            (data)=>{
+              if (data !== null){
+                
+                setChannels(data)
+              } else {
+                (console.log('DATA_CHANNELS:',data))
+              }
+              })
+        }}})
 
       // postQuery('/postKey',{ key : generateChannelKey(), type : 'channel_key'})
       //   .then( (data)=>{ if (data !== null) { if (data.error !== undefined) {setLabel('Ошибка шифрования');setBlocker(false)} else {postQuery('/postChannel',{ name : channelName, key_id : data.id})
@@ -235,6 +246,7 @@ const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) =
     }
     setBlocker(false)
   }
+
 
   const setSearchState = ( text ) => {
     updateSearchState(text)

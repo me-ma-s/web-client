@@ -19,7 +19,7 @@ import { updateKeys } from '../actions/keys'
 
 const Root = styled.div`
   background-color : white;
-  height : calc(100% - 50px);
+  height : calc(100% - 60px);
   align-items: left;
   display: flex;
   justify-content: space-between;
