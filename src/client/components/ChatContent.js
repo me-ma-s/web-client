@@ -84,6 +84,8 @@ const ChatContent = ({ id ,channelKey}) => {
       .catch(console.log);
   }
 
+  console.log(messages)
+
 
 
   const GetListItem = (el) => {
