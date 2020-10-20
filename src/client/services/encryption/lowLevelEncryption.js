@@ -10,6 +10,7 @@ function generateRsaKeyPair() {
 }
 
 function rsaEncrypt(value, pubKey) {
+  if (!pubKey) throw new Error('pubKey undefined')
   const pub = forge.pki.publicKeyFromPem(pubKey);
   return pub.encrypt(value);
 }
@@ -43,6 +44,9 @@ function generateChannelKey() {
 
 
 function aesEncrypt(value, hexKey, hexIv) {
+  if (!iv) throw Error('iv undefined');
+  if (!hexKey) throw Error('hexKey undefined');
+
   const key = forge.util.hexToBytes(hexKey);
   const iv = forge.util.hexToBytes(hexIv);
 
@@ -56,6 +60,9 @@ function aesEncrypt(value, hexKey, hexIv) {
 }
 
 function aesDecrypt(hexValue, hexKey, hexIv) {
+  if (!iv) throw Error('iv undefined');
+  if (!hexKey) throw Error('hexKey undefined');
+
   const iv = forge.util.hexToBytes(hexIv);
   const key = forge.util.hexToBytes(hexKey);
   const value = forge.util.hexToBytes(hexValue);

@@ -40,17 +40,15 @@ function generateAsymKeyPair() {
 
 function generateSignKeyPair() {
   // TODO: подумать над цифровой подписью
+  // Подумал. Похоже, цифровая подпись не нужна. Вместо нее будем шифровать.
   return generateRsaKeyPair();
 }
 
 function encryptUserKey(userKey, pwdKey, iv) {
-  // TODO: подумать над iv
-  if (!iv) throw Error('iv undefined')
   return aesEncrypt(userKey, pwdKey, iv);
 }
 
 function decryptUserKey(userKey, pwdKey, iv) {
-  if (!iv) throw Error('iv undefined')
   return aesDecrypt(userKey, pwdKey, iv);
 }
 
@@ -74,6 +72,47 @@ function generateEmailPassHash(email, password) {
   return sha256(email + ':' + password);
 }
 
+function step1_genKeyPair() {
+  return generateRsaKeyPair();
+}
+
+function step1_genBody(userKey, keyPair) {
+  const iv = generateIv();
+  return {
+    iv,
+    _privKey: aesEncrypt(keyPair.privKey, userKey, iv)
+  }
+}
+
+function step1_genInvitation({ id, user_id, _priv_key }, keyPair) {
+  return JSON.stringify({ id, pubKey: keyPair.pubKey });
+}
+
+function step2_genBody(inviteStr, userKey) {
+  const iv = generateIv();
+  const { id, pubkey } = JSON.parse(inviteStr);
+  const connectionKey = generateAesKey();
+  return {
+    id,
+    _accept_key: rsaEncrypt(connectionKey, pubkey),
+    _own_key: aesEncrypt(connectionKey, userKey, iv),
+    iv
+  }
+}
+
+function step3_genBody({ id, user_id, friend_id, _contact_key, _priv_key, iv }, userKey) {
+  const newIv = generateIv();
+  const privKey = aesDecrypt(_priv_key, userKey, iv);
+  const contact_key = rsaDecrypt(_contact_key, privKey);
+
+  return {
+    id,
+    _contact_key: aesEncrypt(contact_key, userKey),
+    iv: newIv
+  }
+}
+
+
 
 
 export {
@@ -92,6 +131,12 @@ export {
   decryptChannelKey,
   encryptKeyPair,
   decryptKeyPair,
+
+  step1_genKeyPair,
+  step1_genBody,
+  step1_genInvitation,
+  step2_genBody,
+  step3_genBody,
 
   generateEmailPassHash
 }
