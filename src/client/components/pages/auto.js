@@ -8,8 +8,10 @@ import { useHistory } from "react-router-dom";
 import pict from '../../../client/icon.jpg'
 
 import Button from '@material-ui/core/Button';
-import {generateEmailPassHash} from '../../services/encryption/highLevelEncryption';
+import {decryptUserKey, generateEmailPassHash, generatePwdKey} from '../../services/encryption/highLevelEncryption';
 import { postQuery } from '../../services/query-service';
+import { connect } from 'react-redux';
+import {updateKeys} from '../../actions/keys'
 
 const Screen = styled.div`
   width : 100vw;
@@ -54,7 +56,7 @@ const MyIcon = styled.div`
   background-repeat: no-repeat;
 `
 
-const Auto = () => {
+const Auto = ({updateKeys}) => {
 
   const [ email , setEmail ] =  useState('')
   const [ password , setPassword ] = useState('')
@@ -69,6 +71,9 @@ const Auto = () => {
   const apiBase = `${window.location.protocol}//${window.location.host}`;
 
   const Act = ()=>{
+
+    const pwd_key = generatePwdKey(email,password);
+
     postQuery('/logIn',
     {
       email,
@@ -78,6 +83,7 @@ const Auto = () => {
     .then( (data)=>{
       if(data){
         if ( !data.error ){
+          updateKeys({userKey : decryptUserKey(data._user_key,pwd_key,data.iv)})
           history.push("/");
         } else {
           console.log('user:',data)
@@ -107,4 +113,6 @@ const Auto = () => {
   )
 }
 
-export default Auto
+export default connect( null,{
+  updateKeys
+})(Auto)

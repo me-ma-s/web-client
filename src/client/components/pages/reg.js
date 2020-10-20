@@ -24,6 +24,8 @@ import { ErrorOutlineOutlined } from '@material-ui/icons';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import ErrorIcon from '@material-ui/icons/Error';
 import { aesEncrypt, generateIv } from '../../services/encryption/lowLevelEncryption';
+import { useHistory } from "react-router-dom";
+
 
 const AVA = styled(Avatar)`
   height : 240px;
@@ -181,6 +183,7 @@ const Reg = () => {
     password : '',
     cm_password : ''
   })
+  const history = useHistory();
 
   useEffect(()=>{
     let tmp = []
@@ -240,9 +243,8 @@ const Reg = () => {
       )
         .then( (data)=>{
           if(data){
-            console.log({data})
             if(data.error == undefined){
-              setNotification([...notification,{type : 'note', body : 'Регистрация прошла успешно'}])
+              history.push("/authorization");
             } else {
               setNotification([...notification,{type : 'serv_err', body : 'Произошла ошибка, поробуйте позже'}])
             }
