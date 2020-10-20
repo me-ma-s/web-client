@@ -52,12 +52,12 @@ function decryptUserKey(userKey, pwdKey, iv) {
   return aesDecrypt(userKey, pwdKey, iv);
 }
 
-function encryptChannelKey(channelKey, pubKey) {
-  return rsaEncrypt(channelKey, pubKey);
+function encryptChannelKey(channelKey, userKey, iv) {
+  return aesEncrypt(channelKey, userKey, iv);
 }
 
-function decryptChannelKey(channelKey, privKey) {
-  return rsaDecrypt(channelKey, privKey);
+function decryptChannelKey(channelKey, userKey, iv) {
+  return aesDecrypt(channelKey, userKey, iv);
 }
 
 function encryptKeyPair(keypair, userKey) {
