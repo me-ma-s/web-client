@@ -4,22 +4,29 @@ import Header from './header'
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import { InputLabel } from '@material-ui/core';
+import { FilledInput, InputLabel } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { getQuery, postQuery } from '../services/query-service'
-import { generateChannelKey } from '../services/encryption/highLevelEncryption';
+import { generateChannelKey , step1_genKeyPair, step1_genBody} from '../services/encryption/highLevelEncryption';
 import SettingsIcon from '@material-ui/icons/Settings';
 import CloseIcon from '@material-ui/icons/Close';
 import CheckIcon from '@material-ui/icons/Check';
 import { FormControl } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
-
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import AddIcon from '@material-ui/icons/Add';
+import TextField from '@material-ui/core/TextField';
 import ChannelsList from './ChannelsList'
 import { connect } from 'react-redux';
 import {setChannels,dropChannels,updateChannels} from '../actions/channels'
+import HowToRegIcon from '@material-ui/icons/HowToReg';
+import DoneIcon from '@material-ui/icons/Done';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
+
+
 
 const StSettingsIcon = styled(SettingsIcon)`
   font-size : inherit;
@@ -198,6 +205,48 @@ const StListSubheader = styled.div`
     transition-delay: 0ms;
   }
 `
+const StMenu = styled(Menu)`
+  color : green;
+
+`;
+
+const StMenuItem = styled(MenuItem)`
+  padding: 0px 10px;
+  & > svg {
+    padding-right : 10px;
+  }
+`;
+
+const PersonInput = styled(TextField)`
+  width : 280px;
+  height : 30px;
+  direction: rtl;
+  & > div{
+    height : 60px;
+    background-color : white !important;
+    border-radius: 0px;
+    & .MuiInput-underline:before {
+      border-bottom: none;
+    }
+      & > input{
+        direction: ltr;
+        padding : 0px 5%;
+        font-size : 18px;
+        color: black ;
+        outline : none !important;
+      }
+      &:after {
+        border-bottom: none;
+      }
+  }
+`;
+
+const StPerIcBt = styled(IconButton)`
+  padding : 0;
+  margin-left : 10px;
+  color : black;
+`; 
+
 
 const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) => {
 
@@ -207,6 +256,7 @@ const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) =
   const [ addListElement , setAddListElement ] = useState(false);
   const [ channelName , setChannelName ] = useState('');
   const [ label , setLabel ] = useState('Название канала');
+  const [ invite_key , setInvite_key] = useState('');
   const [ blocker , setBlocker ] = useState(false);
 
   useEffect(()=>{
@@ -235,7 +285,6 @@ const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) =
               }
               })
         }}})
-
       // postQuery('/postKey',{ key : generateChannelKey(), type : 'channel_key'})
       //   .then( (data)=>{ if (data !== null) { if (data.error !== undefined) {setLabel('Ошибка шифрования');setBlocker(false)} else {postQuery('/postChannel',{ name : channelName, key_id : data.id})
       //     .then( (data)=>{ if (data !== null) {  if (data.error !== undefined) {setLabel('Ошибка');setBlocker(false)} else {
@@ -246,6 +295,21 @@ const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) =
     }
     setBlocker(false)
   }
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const openMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+    
+    let keyPair = step1_genKeyPair();
+    let body = step1_genBody();
+
+    setInvite_key()
+  };
+
+  const closeMenu = () => {
+    setAnchorEl(null);
+  };
 
 
   const setSearchState = ( text ) => {
@@ -258,7 +322,31 @@ const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) =
   return ( 
     <Root>
       <FixedPart stt={addListElement} >
-        <Header page='Left' cb={setSearchState}/>
+        <Header page='Left' cb={setSearchState} person={openMenu}/>
+        <StMenu
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          getContentAnchorEl={null}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={closeMenu}
+        >
+          <StMenuItem>
+            <PersonInput placeholder={'Введите код приглашения'} key={1} variant="filled" />
+            <StPerIcBt>
+              <DoneIcon fontSize='inherit'/>
+            </StPerIcBt>
+          </StMenuItem>
+          <StMenuItem>
+            <PersonInput value={invite_key} onChange={null} key={2} variant="filled" />
+            <StPerIcBt>
+              <FileCopyIcon fontSize='inherit'/>
+            </StPerIcBt>
+          </StMenuItem>
+        </StMenu>
         <TabsPlace>
           <AddIconArea>
             <StIcBt onClick={()=>setAddListElement(!addListElement)}>

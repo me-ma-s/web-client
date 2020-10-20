@@ -22,6 +22,7 @@ import { MenuList } from '@material-ui/core';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { ErrorOutlineOutlined } from '@material-ui/icons';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import ErrorIcon from '@material-ui/icons/Error';
 
 const AVA = styled(Avatar)`
   height : 240px;
@@ -37,6 +38,7 @@ const Screen = styled.div`
   align-items: center;
   justify-content: center;
   display: flex;
+
 `;
 
 const Root = styled.div`
@@ -193,6 +195,7 @@ const Reg = () => {
 
   const RegAct = (e) =>{
     if (e.key === 'Enter') {
+      let stop = false;
       let tmp = {
         name : '',
         email : '',
@@ -201,13 +204,15 @@ const Reg = () => {
         password : '',
         cm_password : ''
       }
-      if (name === ''){tmp.name = 'Введите имя'}
-      if (email === ''){tmp.email = 'Введите почтовый адрес'}
-      if (surname === ''){tmp.surname = 'Введите фамилию'}
-      if (password === ''){tmp.password = 'Введите пароль'}
-      if (cm_password === ''){tmp.cm_password = 'Введите подтверждающий пароль'}
+      if (name === ''){tmp.name = 'Введите имя'; stop = true}
+      if (email === ''){tmp.email = 'Введите почтовый адрес'; stop = true}
+      if (surname === ''){tmp.surname = 'Введите фамилию'; stop = true}
+      if (password === ''){tmp.password = 'Введите пароль'; stop = true}
+      if (cm_password === ''){tmp.cm_password = 'Введите подтверждающий пароль'; stop = true}
       setError({...error,...tmp})
-      CreateUser()
+      if (!stop){
+        CreateUser()
+      }
     }
   }
 
@@ -230,7 +235,7 @@ const Reg = () => {
             if(data.error == undefined){
               setNotification([...notification,{type : 'note', body : 'Регистрация прошла успешно'}])
             } else {
-              console.log('user:',data)
+              setNotification([...notification,{type : 'serv_err', body : 'Произошла ошибка, поробуйте позже'}])
             }
           } 
         })
@@ -277,13 +282,20 @@ const Reg = () => {
             {el.body}
           </StListItem>
         )
-        default : 
-          return(
-            <StListItem onClick={()=>{deleteElement(id)}} button key={id}>
-              <StCheckCircleOutlineIcon fontSize="inherit" />
-              {el.body}
-            </StListItem>
-          )
+      case 'serv_err' : 
+        return(
+          <StListItem onClick={()=>{deleteElement(id)}} button key={id}>
+            <ErrorIcon fontSize="inherit" />
+            {el.body}
+          </StListItem>
+        )
+      default : 
+        return(
+          <StListItem onClick={()=>{deleteElement(id)}} button key={id}>
+            <StCheckCircleOutlineIcon fontSize="inherit" />
+            {el.body}
+          </StListItem>
+        )
     }
   }
 

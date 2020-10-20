@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { FormControl } from '@material-ui/core';
 import { InputLabel } from '@material-ui/core';
 import { FilledInput } from '@material-ui/core';
-
+import { useHistory } from "react-router-dom";
 import pict from '../../../client/icon.jpg'
 
 import Button from '@material-ui/core/Button';
@@ -58,12 +58,15 @@ const Auto = () => {
 
   const [ email , setEmail ] =  useState('')
   const [ password , setPassword ] = useState('')
+  const history = useHistory();
 
   const RegAct = (e) =>{
     if (e.key === 'Enter') {
       Act()
     }  
   }
+
+  const apiBase = `${window.location.protocol}//${window.location.host}`;
 
   const Act = ()=>{
     postQuery('/logIn',
@@ -72,7 +75,15 @@ const Auto = () => {
       email_pass_hash:generateEmailPassHash(email,password),
     }
   )
-    .then( (data)=>{if(data){console.log('user:',data)} } )
+    .then( (data)=>{
+      if(data){
+        if ( !data.error ){
+          history.push("/");
+        } else {
+          console.log('user:',data)
+        }
+      } 
+    })
   }
 
   return(
@@ -89,7 +100,7 @@ const Auto = () => {
         </StForm>
         <BtFotm>
           <Button onClick={Act} variant="outlined">Войти</Button>
-          <Button variant="outlined">Регистрация</Button>
+          <Button href={apiBase + '/regist'} variant="outlined">Регистрация</Button>
         </BtFotm>
       </Root>
     </Screen>
