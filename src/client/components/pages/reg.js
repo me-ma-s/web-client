@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import styled from 'styled-components'
 
 import { FormControl } from '@material-ui/core';
@@ -13,6 +13,13 @@ import { postQuery } from '../../services/query-service';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import { ClickAwayListener } from '@material-ui/core';
+import { MenuList } from '@material-ui/core';
+
 const AVA = styled(Avatar)`
   height : 240px;
   width : 180px;
@@ -26,7 +33,6 @@ const Screen = styled.div`
   background-color : white;
   align-items: center;
   justify-content: center;
-
   display: flex;
 `;
 
@@ -108,6 +114,39 @@ const StArrowRightIcon = styled(ChevronRightIcon)`
   top : 8px;
 `;
 
+const StList = styled(List)`
+  position : absolute;
+  right : 20px;
+  font-size : 20px;
+  padding : 0;
+  margin : 0;
+  top : 10px;
+  border : solid 1px lightgrey;
+  border-radius: 4px;
+`;
+
+const StMenuList = styled(MenuList)`
+  position : absolute;
+  right : 20px;
+  z-index : 100;
+  font-size : 20px;
+  padding : 0;
+  margin : 0;
+  top : 52px;
+
+`;
+
+const StListItem = styled(ListItem)`
+  border : solid 1px lightgrey;
+  border-radius: 4px;
+`;
+
+const StListItemError = styled(ListItem)`
+  border : solid 1px #ef5350;
+  border-radius: 4px;
+`;
+
+
 const Reg = () => {
 
   const [ email , setEmail ] =  useState('')
@@ -115,6 +154,8 @@ const Reg = () => {
   const [ surname , setSurname ] =  useState('')
   const [ password , setPassword ] = useState('')
   const [ cm_password , setCm_password ] = useState('')
+  const [ notification , setNotification ] = useState([]);
+  const [ menu ,setMenu ] = useState(false)
   const [ addPictureFlag, setAddPictureFlag ] = useState(false)
   const [ avatar , setAvatar ] = useState(null)
   const [ error , setError ] = useState({
@@ -125,22 +166,43 @@ const Reg = () => {
     password : '',
     cm_password : ''
   })
-  const updateError = (obj) => {
-    setError({...error,...obj})
-  }
+
+  useEffect(()=>{
+    let tmp = []
+    for (const key in error) {
+      if (error[key] !== ''){
+        tmp.push({type : 'error', error_key : key, body : error[key]})
+      }
+    }
+    setNotification([...notification.filter((el)=>(el.type !== 'error')),...tmp])
+  },[error])
 
   const apiBase = `${window.location.protocol}//${window.location.host}`;
 
   const RegAct = (e) =>{
     if (e.key === 'Enter') {
-      if (name === ''){setError({name : 'Введите имя'})}
-      if (email === ''){setError({email : 'Введите почтовый адрес'})}
-      if (surname === ''){setError({surname : 'Введите фамилию'})}
-      if (password === ''){setError({password : 'Введите пароль'})}
-      if (cm_password === ''){setError({cm_password : 'Введите подтверждающий пароль'})}
+      let tmp = {
+        name : '',
+        email : '',
+        surname : '',
+        password : '',
+        password : '',
+        cm_password : ''
+      }
+      if (name === ''){tmp.name = 'Введите имя'}
+      if (email === ''){tmp.email = 'Введите почтовый адрес'}
+      if (surname === ''){tmp.surname = 'Введите фамилию'}
+      if (password === ''){tmp.password = 'Введите пароль'}
+      if (cm_password === ''){tmp.cm_password = 'Введите подтверждающий пароль'}
+      setError({...error,...tmp})
       CreateUser()
     }
   }
+
+  const updateError = (obj) => {
+    setError({...error,...obj})
+  }
+
 
   const CreateUser = () => {
     postQuery('/postUser',
@@ -166,16 +228,54 @@ const Reg = () => {
 
     reader.addEventListener("load", () => {
       preview.src = reader.result;
+      setNotification([...notification,{type : 'note', body : 'Изображение успешно загружено'}])
     }, false);
 
     if (file) {
       reader.readAsDataURL(file);
     }
+  }
 
+  const deleteItem = (tag) => {
+    let obj = {}
+    obj[tag] = ''
+    setError({...error,...obj})
+  }
+
+
+  const notToList = (el,id)=>{
+    switch (el.type){
+      case 'error' :
+        return(
+          <StListItem onClick={()=>{deleteItem(el.error_key)}} button key={id}>
+            {el.body}
+          </StListItem>
+        )
+        default : 
+          return(
+            <StListItem button key={id}>
+              {el.body}
+            </StListItem>
+          )
+    }
   }
 
   return(
     <Screen>
+      <StList>
+        <ListItem button onClick={()=>{if (notification.length !== 0) {setMenu(!menu)} else{setMenu(false)} }}> 
+          {`Уведомления : ${notification.length == 0 ? 0 : notification.length }`} 
+        </ListItem>
+      </StList>
+      {
+        menu
+        ?
+        <StMenuList >
+          {notification.map(notToList)}
+        </StMenuList>
+        :
+        null
+      }
       <Root>
           <input
               accept="image/*"
