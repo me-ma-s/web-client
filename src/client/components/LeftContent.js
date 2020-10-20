@@ -8,7 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { FilledInput, InputLabel } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { getQuery, postQuery } from '../services/query-service'
-import { generateChannelKey , step1_genKeyPair, step1_genBody} from '../services/encryption/highLevelEncryption';
+import { generateChannelKey , step1_genKeyPair, step1_genBody, generatePwdKey, encryptChannelKey} from '../services/encryption/highLevelEncryption';
 import SettingsIcon from '@material-ui/icons/Settings';
 import CloseIcon from '@material-ui/icons/Close';
 import CheckIcon from '@material-ui/icons/Check';
@@ -248,7 +248,7 @@ const StPerIcBt = styled(IconButton)`
 `; 
 
 
-const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) => {
+const LeftContent = ({userKey,changeChannels,setChannels,dropChannels,updateChannels}) => {
 
   const [ tabsState , updateTabsState ] = useState(false)
   const [ searchState , updateSearchState] = useState('')
@@ -270,7 +270,9 @@ const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) =
       setBlocker(false)
     }
     else {
-      postQuery('/postChannel',{ name : channelName, _channel_key: generateChannelKey()})
+      const channelKey = generateChannelKey()
+      const _channel_key = encryptChannelKey(channelKey,)
+      postQuery('/postChannel',{ name : channelName, _channel_key: channelKey})
         .then( (data)=>{ if (data !== null ) {if (data.error !== undefined){setLabel('Ошибка');setBlocker(false)}  else {
           setChannelName('');
           setLabel('Название канала');
@@ -310,6 +312,8 @@ const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) =
   useEffect(()=>{
     changeChannels(currentId)
   },[currentId])
+
+
 
   return ( 
     <Root>
@@ -394,7 +398,9 @@ const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) =
   )
 }
 
-export default connect(null,{
+export default connect((store)=>({
+  userKey : store.keys.userKey
+}),{
   setChannels,
   dropChannels,
   updateChannels,
