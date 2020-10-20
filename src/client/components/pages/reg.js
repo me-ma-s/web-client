@@ -19,6 +19,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { ClickAwayListener } from '@material-ui/core';
 import { MenuList } from '@material-ui/core';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import { ErrorOutlineOutlined } from '@material-ui/icons';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 
 const AVA = styled(Avatar)`
   height : 240px;
@@ -139,11 +142,20 @@ const StMenuList = styled(MenuList)`
 const StListItem = styled(ListItem)`
   border : solid 1px lightgrey;
   border-radius: 4px;
+  width : 400px;
+  background-color : white;
+  :hover{
+    opacity : 1;
+    background-color : rgba(222,222,222,1);
+  }
 `;
 
-const StListItemError = styled(ListItem)`
-  border : solid 1px #ef5350;
-  border-radius: 4px;
+const StErrorOutlineIcon = styled(ErrorOutlineOutlined)`
+  margin-right : 15px;
+`;
+
+const StCheckCircleOutlineIcon = styled(CheckCircleOutlineIcon)`
+  margin-right : 15px;
 `;
 
 
@@ -213,7 +225,15 @@ const Reg = () => {
           email_pass_hash:generateEmailPassHash(email,password),
         }
       )
-        .then( (data)=>{if(data){console.log('user:',data)} } )
+        .then( (data)=>{
+          if(data){
+            if(data.error == undefined){
+              setNotification([...notification,{type : 'note', body : 'Регистрация прошла успешно'}])
+            } else {
+              console.log('user:',data)
+            }
+          } 
+        })
   }
 
   const saveAvatar = (data) =>{
@@ -242,18 +262,25 @@ const Reg = () => {
     setError({...error,...obj})
   }
 
+  const deleteElement = (id) => {
+    let test = notification.filter((el,id_el)=>(id!==id_el))
+    setNotification(test)
+  }
+
 
   const notToList = (el,id)=>{
     switch (el.type){
       case 'error' :
         return(
           <StListItem onClick={()=>{deleteItem(el.error_key)}} button key={id}>
+            <StErrorOutlineIcon fontSize="inherit" />
             {el.body}
           </StListItem>
         )
         default : 
           return(
-            <StListItem button key={id}>
+            <StListItem onClick={()=>{deleteElement(id)}} button key={id}>
+              <StCheckCircleOutlineIcon fontSize="inherit" />
               {el.body}
             </StListItem>
           )
