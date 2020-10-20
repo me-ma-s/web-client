@@ -44,7 +44,7 @@ function generateChannelKey() {
 
 
 function aesEncrypt(value, hexKey, hexIv) {
-  if (!iv) throw Error('iv undefined');
+  if (!hexIv) throw Error('iv undefined');
   if (!hexKey) throw Error('hexKey undefined');
 
   const key = forge.util.hexToBytes(hexKey);
@@ -60,7 +60,7 @@ function aesEncrypt(value, hexKey, hexIv) {
 }
 
 function aesDecrypt(hexValue, hexKey, hexIv) {
-  if (!iv) throw Error('iv undefined');
+  if (!hexIv) throw Error('iv undefined');
   if (!hexKey) throw Error('hexKey undefined');
 
   const iv = forge.util.hexToBytes(hexIv);
