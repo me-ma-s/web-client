@@ -4,6 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import MenuIcon from '@material-ui/icons/Menu';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
 
 
 const StIcBut = styled(IconButton)`
@@ -38,14 +39,12 @@ const StIcButMenu = styled(IconButton)`
 
 const Root = styled.header`
   display: flex;
-  max-width : 100%;
   border-top-left-radius: 7px;
   border-top-right-radius: 7px;
   justify-content: flex-start;
   align-items: center;
   height: 60px;
   padding : 0% 0% 0% 1%;
-  width: 100%;
   background-color : #263238;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px -1px, rgba(0, 0, 0, 0.1) 0px 1px 1px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
   color: #fff;
@@ -97,7 +96,7 @@ const LastBox = styled.div`
 `;
 
 
-const Header = ( { page, cb} ) => {
+const Header = ( { page, cb, person} ) => {
   return ( 
     <Root>
       { page === 'Left'
@@ -107,8 +106,8 @@ const Header = ( { page, cb} ) => {
             <StIcButMenu > <MenuIcon/> </StIcButMenu>
           </SmallBox>,
           <SmallBox key={1} >
-          <StIcBut > <Avatar variant={'rounded'} >MF</Avatar></StIcBut>
-        </SmallBox>,
+          <StIcButMenu onClick={person} > <PersonAddIcon/> </StIcButMenu>
+          </SmallBox>,
           <LastBox key={2}>
             <BeautySearch onChange={(e)=>{cb(e.target.value)}} placeholder={'Поиск...'} key={2} variant="filled" />
           </LastBox>,
