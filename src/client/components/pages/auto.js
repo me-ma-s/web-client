@@ -100,7 +100,7 @@ const Auto = () => {
         </StForm>
         <BtFotm>
           <Button onClick={Act} variant="outlined">Войти</Button>
-          <Button href={apiBase + '/regist'} variant="outlined">Регистрация</Button>
+          <Button href={apiBase + '/registration'} variant="outlined">Регистрация</Button>
         </BtFotm>
       </Root>
     </Screen>

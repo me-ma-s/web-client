@@ -5,7 +5,7 @@ import { FormControl } from '@material-ui/core';
 import { InputLabel } from '@material-ui/core';
 import { FilledInput } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import {generateEmailPassHash} from '../../services/encryption/highLevelEncryption';
+import {encryptUserKey, generateEmailPassHash, generatePwdKey, generateUserKey} from '../../services/encryption/highLevelEncryption';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 import Avatar from '@material-ui/core/Avatar';
@@ -23,6 +23,7 @@ import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { ErrorOutlineOutlined } from '@material-ui/icons';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import ErrorIcon from '@material-ui/icons/Error';
+import { aesEncrypt, generateIv } from '../../services/encryption/lowLevelEncryption';
 
 const AVA = styled(Avatar)`
   height : 240px;
@@ -222,16 +223,24 @@ const Reg = () => {
 
 
   const CreateUser = () => {
+    const pwd_key = generatePwdKey(email,password)
+    const user_key = generateUserKey();
+    const iv = generateIv();
+    console.log({iv})
+    const _user_key = encryptUserKey(user_key,pwd_key,iv)
     postQuery('/postUser',
         {
           email,
           name,
           surname,
+          iv,
+          _user_key,
           email_pass_hash:generateEmailPassHash(email,password),
         }
       )
         .then( (data)=>{
           if(data){
+            console.log({data})
             if(data.error == undefined){
               setNotification([...notification,{type : 'note', body : 'Регистрация прошла успешно'}])
             } else {

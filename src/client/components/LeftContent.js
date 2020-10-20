@@ -270,7 +270,7 @@ const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) =
       setBlocker(false)
     }
     else {
-      postQuery('/postChannel',{ name : channelName, channel_key: generateChannelKey()})
+      postQuery('/postChannel',{ name : channelName, _channel_key: generateChannelKey()})
         .then( (data)=>{ if (data !== null ) {if (data.error !== undefined){setLabel('Ошибка');setBlocker(false)}  else {
           setChannelName('');
           setLabel('Название канала');
@@ -278,20 +278,12 @@ const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) =
           .then(
             (data)=>{
               if (data !== null){
-                
                 setChannels(data)
               } else {
                 (console.log('DATA_CHANNELS:',data))
               }
               })
         }}})
-      // postQuery('/postKey',{ key : generateChannelKey(), type : 'channel_key'})
-      //   .then( (data)=>{ if (data !== null) { if (data.error !== undefined) {setLabel('Ошибка шифрования');setBlocker(false)} else {postQuery('/postChannel',{ name : channelName, key_id : data.id})
-      //     .then( (data)=>{ if (data !== null) {  if (data.error !== undefined) {setLabel('Ошибка');setBlocker(false)} else {
-      //       setChannelName('');
-      //       setLabel('Название канала');
-      //       getQuery('/getAllChannels').then((data)=>{if (data !== null){setChannels(data)} else (console.log('DATA_CHANNELS:',data))})
-      //     }}})}}})
     }
     setBlocker(false)
   }
@@ -301,10 +293,10 @@ const LeftContent = ({changeChannels,setChannels,dropChannels,updateChannels}) =
   const openMenu = (event) => {
     setAnchorEl(event.currentTarget);
     
-    let keyPair = step1_genKeyPair();
-    let body = step1_genBody();
+    //let keyPair = step1_genKeyPair();
+    //let body = step1_genBody();
 
-    setInvite_key()
+    setInvite_key('')
   };
 
   const closeMenu = () => {
