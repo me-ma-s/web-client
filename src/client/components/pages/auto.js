@@ -4,12 +4,14 @@ import styled from 'styled-components'
 import { FormControl } from '@material-ui/core';
 import { InputLabel } from '@material-ui/core';
 import { FilledInput } from '@material-ui/core';
-
+import { useHistory } from "react-router-dom";
 import pict from '../../../client/icon.jpg'
 
 import Button from '@material-ui/core/Button';
-import {generateEmailPassHash} from '../../services/encryption/highLevelEncryption';
+import { decryptUserKey, generateEmailPassHash, generatePwdKey } from '../../services/encryption/highLevelEncryption';
 import { postQuery } from '../../services/query-service';
+import { connect } from 'react-redux';
+import { updateKeys } from '../../actions/keys'
 
 const Screen = styled.div`
   width : 100vw;
@@ -54,46 +56,63 @@ const MyIcon = styled.div`
   background-repeat: no-repeat;
 `
 
-const Auto = () => {
+const Auto = ({ updateKeys }) => {
 
-  const [ email , setEmail ] =  useState('')
-  const [ password , setPassword ] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const history = useHistory();
 
-  const RegAct = (e) =>{
+  const RegAct = (e) => {
     if (e.key === 'Enter') {
       Act()
-    }  
-  }
-
-  const Act = ()=>{
-    postQuery('/logIn',
-    {
-      email,
-      email_pass_hash:generateEmailPassHash(email,password),
     }
-  )
-    .then( (data)=>{if(data){console.log('user:',data)} } )
   }
 
-  return(
+  const apiBase = `${window.location.protocol}//${window.location.host}`;
+
+  const Act = () => {
+
+    const pwd_key = generatePwdKey(email, password);
+
+    postQuery('/logIn', {
+      email,
+      email_pass_hash: generateEmailPassHash(email, password),
+    })
+    .then((data) => {
+      if (data) {
+        if (!data.error) {
+          const userKey = decryptUserKey(data._user_key, pwd_key, data.iv);
+          console.log({ userKey });
+          updateKeys({ userKey });
+          history.push("/");
+        } else {
+          console.log('user:', data)
+        }
+      }
+    })
+  }
+
+  return (
     <Screen>
       <Root>
-        <MyIcon/>
+        <MyIcon />
         <StForm>
           <InputLabel >Почта</InputLabel>
-          <FilledInput value={email} onKeyUp={RegAct} onChange={(e)=>setEmail(e.target.value)} ></FilledInput>
+          <FilledInput value={email} onKeyUp={RegAct} onChange={(e) => setEmail(e.target.value)} ></FilledInput>
         </StForm>
         <StForm>
           <InputLabel >Пароль</InputLabel>
-          <FilledInput value={password} onKeyUp={RegAct} onChange={(e)=>setPassword(e.target.value)}></FilledInput>
+          <FilledInput value={password} onKeyUp={RegAct} onChange={(e) => setPassword(e.target.value)}></FilledInput>
         </StForm>
         <BtFotm>
           <Button onClick={Act} variant="outlined">Войти</Button>
-          <Button variant="outlined">Регистрация</Button>
+          <Button href={apiBase + '/registration'} variant="outlined">Регистрация</Button>
         </BtFotm>
       </Root>
     </Screen>
   )
 }
 
-export default Auto
+export default connect(null, {
+  updateKeys
+})(Auto)

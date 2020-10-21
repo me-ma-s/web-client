@@ -10,6 +10,7 @@ function generateRsaKeyPair() {
 }
 
 function rsaEncrypt(value, pubKey) {
+  if (!pubKey) throw new Error('pubKey undefined')
   const pub = forge.pki.publicKeyFromPem(pubKey);
   return pub.encrypt(value);
 }
@@ -43,12 +44,16 @@ function generateChannelKey() {
 
 
 function aesEncrypt(value, hexKey, hexIv) {
+  if (!value) throw Error('value undefined');
+  if (!hexIv) throw Error('iv undefined');
+  if (!hexKey) throw Error('hexKey undefined');
+
   const key = forge.util.hexToBytes(hexKey);
   const iv = forge.util.hexToBytes(hexIv);
 
   const cipher = forge.cipher.createCipher('AES-CBC', key);
   cipher.start({ iv });
-  cipher.update(forge.util.createBuffer(value, 'utf8'));//
+  cipher.update(forge.util.createBuffer(value, 'utf8'));
   cipher.finish();
 
   const hexOutput = forge.util.bytesToHex(cipher.output);
@@ -56,6 +61,10 @@ function aesEncrypt(value, hexKey, hexIv) {
 }
 
 function aesDecrypt(hexValue, hexKey, hexIv) {
+  if (!hexValue) throw Error('hexValue undefined');
+  if (!hexIv) throw Error('iv undefined');
+  if (!hexKey) throw Error('hexKey undefined');
+
   const iv = forge.util.hexToBytes(hexIv);
   const key = forge.util.hexToBytes(hexKey);
   const value = forge.util.hexToBytes(hexValue);
@@ -64,7 +73,9 @@ function aesDecrypt(hexValue, hexKey, hexIv) {
   decipher.start({ iv });
   decipher.update(forge.util.createBuffer(value));
 
-  return decipher.output.toString();
+  const ret = decipher.output.toString().replace(/\u0010/g, '');
+  
+  return ret;
 }
 
 function sha256(str) {

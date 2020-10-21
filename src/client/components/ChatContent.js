@@ -4,15 +4,9 @@ import Header from './header'
 
 import { getQuery, postQuery } from '../services/query-service'
 
-import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
-import Avatar from '@material-ui/core/Avatar';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
-
-import Typography from '@material-ui/core/Typography';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 
 import { updateKeys } from '../actions/keys'
@@ -45,7 +39,7 @@ const StTextareaAutosize = styled(TextareaAutosize)`
   font-size : 16px;
   padding : 10px 2% 10px 2%;
   vertical-align: bottom;
-  width : 100%;
+  width : 95%;
   align-items : center;
 `;
 
@@ -56,6 +50,7 @@ const HeaderContainer = styled.div`
 const Block = styled.div`
   height : 100%;
 `;
+
 
 import { encryptMsg, decryptMsg, generateChannelKey } from '../services/encryption/highLevelEncryption';
 import { connect } from 'react-redux';
@@ -83,10 +78,6 @@ const ChatContent = ({ id ,channelKey}) => {
       .then(setMessages)
       .catch(console.log);
   }
-
-  console.log(messages)
-
-
 
   const GetListItem = (el) => {
     return (
