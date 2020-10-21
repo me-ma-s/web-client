@@ -8,10 +8,10 @@ import { useHistory } from "react-router-dom";
 import pict from '../../../client/icon.jpg'
 
 import Button from '@material-ui/core/Button';
-import {decryptUserKey, generateEmailPassHash, generatePwdKey} from '../../services/encryption/highLevelEncryption';
+import { decryptUserKey, generateEmailPassHash, generatePwdKey } from '../../services/encryption/highLevelEncryption';
 import { postQuery } from '../../services/query-service';
 import { connect } from 'react-redux';
-import {updateKeys} from '../../actions/keys'
+import { updateKeys } from '../../actions/keys'
 
 const Screen = styled.div`
   width : 100vw;
@@ -56,53 +56,53 @@ const MyIcon = styled.div`
   background-repeat: no-repeat;
 `
 
-const Auto = ({updateKeys}) => {
+const Auto = ({ updateKeys }) => {
 
-  const [ email , setEmail ] =  useState('')
-  const [ password , setPassword ] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const history = useHistory();
 
-  const RegAct = (e) =>{
+  const RegAct = (e) => {
     if (e.key === 'Enter') {
       Act()
-    }  
+    }
   }
 
   const apiBase = `${window.location.protocol}//${window.location.host}`;
 
-  const Act = ()=>{
+  const Act = () => {
 
-    const pwd_key = generatePwdKey(email,password);
+    const pwd_key = generatePwdKey(email, password);
 
-    postQuery('/logIn',
-    {
+    postQuery('/logIn', {
       email,
-      email_pass_hash:generateEmailPassHash(email,password),
-    }
-  )
-    .then( (data)=>{
-      if(data){
-        if ( !data.error ){
-          updateKeys({userKey : decryptUserKey(data._user_key,pwd_key,data.iv)})
+      email_pass_hash: generateEmailPassHash(email, password),
+    })
+    .then((data) => {
+      if (data) {
+        if (!data.error) {
+          const userKey = decryptUserKey(data._user_key, pwd_key, data.iv);
+          console.log({ userKey });
+          updateKeys({ userKey });
           history.push("/");
         } else {
-          console.log('user:',data)
+          console.log('user:', data)
         }
-      } 
+      }
     })
   }
 
-  return(
+  return (
     <Screen>
       <Root>
-        <MyIcon/>
+        <MyIcon />
         <StForm>
           <InputLabel >Почта</InputLabel>
-          <FilledInput value={email} onKeyUp={RegAct} onChange={(e)=>setEmail(e.target.value)} ></FilledInput>
+          <FilledInput value={email} onKeyUp={RegAct} onChange={(e) => setEmail(e.target.value)} ></FilledInput>
         </StForm>
         <StForm>
           <InputLabel >Пароль</InputLabel>
-          <FilledInput value={password} onKeyUp={RegAct} onChange={(e)=>setPassword(e.target.value)}></FilledInput>
+          <FilledInput value={password} onKeyUp={RegAct} onChange={(e) => setPassword(e.target.value)}></FilledInput>
         </StForm>
         <BtFotm>
           <Button onClick={Act} variant="outlined">Войти</Button>
@@ -113,6 +113,6 @@ const Auto = ({updateKeys}) => {
   )
 }
 
-export default connect( null,{
+export default connect(null, {
   updateKeys
 })(Auto)

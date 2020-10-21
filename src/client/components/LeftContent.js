@@ -8,7 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { FilledInput, InputLabel } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { getQuery, postQuery } from '../services/query-service'
-import { generateChannelKey , step1_genKeyPair, step1_genBody, generatePwdKey, encryptChannelKey} from '../services/encryption/highLevelEncryption';
+import { generateChannelKey , step1_genKeyPair, step1_genBody, generatePwdKey, encryptChannelKey, decryptChannelKey} from '../services/encryption/highLevelEncryption';
 import SettingsIcon from '@material-ui/icons/Settings';
 import CloseIcon from '@material-ui/icons/Close';
 import CheckIcon from '@material-ui/icons/Check';
@@ -25,6 +25,7 @@ import HowToRegIcon from '@material-ui/icons/HowToReg';
 import DoneIcon from '@material-ui/icons/Done';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
+import { generateIv } from '../services/encryption/lowLevelEncryption';
 
 
 
@@ -259,8 +260,21 @@ const LeftContent = ({userKey,changeChannels,setChannels,dropChannels,updateChan
   const [ invite_key , setInvite_key] = useState('');
   const [ blocker , setBlocker ] = useState(false);
 
+
   useEffect(()=>{
-    getQuery('/getAllChannels').then((data)=>{if (data !== null){setChannels(data)} else (console.log('DATA_CHANNELS:',data))})
+    getQuery('/getAllChannels')
+    .then( (data) => data.map((el)=>{
+      el.channelKey = decryptChannelKey(el._channel_key, userKey, el.iv);
+      delete el._channel_key;
+      return el;
+    }))
+    .then((data)=>{
+      if (data !== null){
+        setChannels(data)
+      } else {
+        console.log('DATA_CHANNELS:',data)
+      }
+    })
   },[])
 
   const AddChannel = () => {
@@ -270,13 +284,20 @@ const LeftContent = ({userKey,changeChannels,setChannels,dropChannels,updateChan
       setBlocker(false)
     }
     else {
-      const channelKey = generateChannelKey()
-      const _channel_key = encryptChannelKey(channelKey,)
-      postQuery('/postChannel',{ name : channelName, _channel_key: channelKey})
+      const channelKey = generateChannelKey();
+      const iv = generateIv();
+      console.log('DEBUG::',{channelKey,userKey,iv})
+      const _channel_key = encryptChannelKey(channelKey,userKey,iv)
+      postQuery('/postChannel',{ name : channelName,iv, _channel_key})
         .then( (data)=>{ if (data !== null ) {if (data.error !== undefined){setLabel('Ошибка');setBlocker(false)}  else {
           setChannelName('');
           setLabel('Название канала');
           getQuery('/getAllChannels')
+          .then( (data) => data.map((el)=>{
+            el.channelKey = decryptChannelKey(el._channel_key, userKey, el.iv);
+            delete el._channel_key;
+            return el;
+          }))
           .then(
             (data)=>{
               if (data !== null){
