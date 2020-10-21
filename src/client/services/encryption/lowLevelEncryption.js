@@ -1,6 +1,6 @@
 import forge from 'node-forge';
 
-// TODO: Разобраться, что такое 'e'
+// TODO: Вспомнить, что такое 'e'
 // TODO: сделать генерацию ключей асинхронной
 function generateRsaKeyPair() {
   const keyPair = forge.rsa.generateKeyPair({ bits: 2048, e: 0x10001 });
@@ -10,18 +10,24 @@ function generateRsaKeyPair() {
 }
 
 function rsaEncrypt(value, pubKey) {
+  if (!value) throw new Error('value undefined')
   if (!pubKey) throw new Error('pubKey undefined')
   const pub = forge.pki.publicKeyFromPem(pubKey);
   return pub.encrypt(value);
 }
 
 function rsaDecrypt(value, privKey) {
+  if (!value) throw new Error('value undefined')
+  if (!privKey) throw new Error('privKey undefined')
   const priv = forge.pki.privateKeyFromPem(privKey);
   return priv.decrypt(value);
 }
 
 function generatePwdKey(login, password) {
-  const numIterations = 10 * 1000;
+  if (!login) throw new Error('login undefined')
+  if (!password) throw new Error('password undefined')
+
+  const numIterations = 10_000;
   const pwdKey = forge.pkcs5.pbkdf2(password, login, numIterations, 32);
   return forge.util.bytesToHex(pwdKey);
 }
@@ -79,6 +85,7 @@ function aesDecrypt(hexValue, hexKey, hexIv) {
 }
 
 function sha256(str) {
+  if (!str) throw new Error('str undefined')
   const md = forge.md.sha256.create();
   md.update(str);
   return md.digest().toHex();
