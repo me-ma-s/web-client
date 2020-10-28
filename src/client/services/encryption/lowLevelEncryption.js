@@ -27,7 +27,7 @@ function generatePwdKey(login, password) {
   if (!login) throw new Error('login undefined')
   if (!password) throw new Error('password undefined')
 
-  const numIterations = 10_000;
+  const numIterations = 10000;
   const pwdKey = forge.pkcs5.pbkdf2(password, login, numIterations, 32);
   return forge.util.bytesToHex(pwdKey);
 }
