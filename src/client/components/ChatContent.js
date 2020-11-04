@@ -1,15 +1,12 @@
 import React, { useLayoutEffect, useState, useEffect } from 'react';
 import styled from 'styled-components'
 import Header from './header'
-
 import { getQuery, postQuery } from '../services/query-service'
-
+import { encryptMsg, decryptMsg, generateChannelKey } from '../services/encryption/highLevelEncryption';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
-
-import { updateKeys } from '../actions/keys'
 
 const Root = styled.div`
   background-color : white;
@@ -51,14 +48,7 @@ const Block = styled.div`
   height : 100%;
 `;
 
-
-import { encryptMsg, decryptMsg, generateChannelKey } from '../services/encryption/highLevelEncryption';
-import { connect } from 'react-redux';
-// TODO: это временное решение, нужно вытаскивать ключ с сервера
-const defaultChannelKey = generateChannelKey();
-
-
-const ChatContent = ({ id ,channelKey}) => {
+const ChatContent = ({ channel }) => {
 
   const [messages, setMessages] = useState([])
   const [text, setText] = useState('')
@@ -66,22 +56,22 @@ const ChatContent = ({ id ,channelKey}) => {
 
   useEffect(() => {
     clearTimeout(timer);
-    getMessage(id)
-    setTimer(setInterval(() => { getMessage(id) }, 3000))
-  }, [id,channelKey])
+    getMessage(channel)
+    setTimer(setInterval(() => { getMessage(channel) }, 3000))
+  }, [channel])
 
-  const getMessage = (channel_id) => {
-    console.log('Timeout:::', channel_id)
+  const getMessage = (channel) => {
+    console.log('Timeout:::', channel)
     setMessages([]);
-    getQuery('/getMessages/', { channel_id })
-      .then((msgArr) => msgArr.map((msg) => decryptMsg(msg, channelKey)))
+    getQuery('/getMessages/', { channel_id : channel.id })
+      .then((msgArr) => msgArr.map((msg) => decryptMsg(msg, channel.key )))
       .then(setMessages)
       .catch(console.log);
   }
 
   const GetListItem = (el) => {
     return (
-      <ListItem key={el.id}>
+      <ListItem key={'Unique_key' + el.id}>
         <ListItemText>
           {el.text}
         </ListItemText>
@@ -89,15 +79,14 @@ const ChatContent = ({ id ,channelKey}) => {
     )
   }
 
-
-  const Send = () => {
+  const Send = (channel) => {
     let msg = {
-      channel_id: id,
+      channel_id: channel.id,
       user_id: 3, ///TODO: заменить на ...
       text
     };
     setText('');
-    msg = encryptMsg(msg, channelKey);
+    msg = encryptMsg(msg, channel.key);
     console.log('MSG:::', msg)
     postQuery('/postMessage', msg).then((data) => {})
   }
@@ -120,7 +109,7 @@ const ChatContent = ({ id ,channelKey}) => {
             rowsMin={3}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                Send()
+                Send(channel)
               }
             }}
             onChange={(e) => {
@@ -133,8 +122,4 @@ const ChatContent = ({ id ,channelKey}) => {
   )
 }
 
-export default connect( (store)=>({
-    channelKey : store.keys.channelKey 
-  }),{
-    updateKeys
-  })(ChatContent)
+export default ChatContent

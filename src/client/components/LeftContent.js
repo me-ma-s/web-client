@@ -249,17 +249,20 @@ const StPerIcBt = styled(IconButton)`
 `; 
 
 
-const LeftContent = ({userKey,changeChannels,setChannels,dropChannels,updateChannels}) => {
+const LeftContent = ({change_channels,setChannels,dropChannels,updateChannels}) => {
 
   const [ tabsState , updateTabsState ] = useState(false)
   const [ searchState , updateSearchState] = useState('')
-  const [ currentId , setCurrentId ] = useState(null)
+  const [ current_channel , set_current_channel ] = useState(
+    { key : 0,
+      id : 0
+    }
+  )
   const [ addListElement , setAddListElement ] = useState(false);
   const [ channelName , setChannelName ] = useState('');
   const [ label , setLabel ] = useState('Название канала');
   const [ invite_key , setInvite_key] = useState('');
-  const [ blocker , setBlocker ] = useState(false);
-
+  const userKey = localStorage.getItem("user_key")
 
   useEffect(()=>{
     getQuery('/getAllChannels')
@@ -269,7 +272,7 @@ const LeftContent = ({userKey,changeChannels,setChannels,dropChannels,updateChan
       return el;
     }))
     .then((data)=>{
-      if (data !== null){
+      if (data != null){
         setChannels(data)
       } else {
         console.log('DATA_CHANNELS:',data)
@@ -278,18 +281,16 @@ const LeftContent = ({userKey,changeChannels,setChannels,dropChannels,updateChan
   },[])
 
   const AddChannel = () => {
-    setBlocker(true)
     if( channelName === ''){ 
       setLabel('Введите имя');
-      setBlocker(false)
     }
     else {
       const channelKey = generateChannelKey();
       const iv = generateIv();
-      console.log('DEBUG::',{channelKey,userKey,iv})
+      //console.log('DEBUG::',{channelKey,userKey,iv})
       const _channel_key = encryptChannelKey(channelKey,userKey,iv)
       postQuery('/postChannel',{ name : channelName,iv, _channel_key})
-        .then( (data)=>{ if (data !== null ) {if (data.error !== undefined){setLabel('Ошибка');setBlocker(false)}  else {
+        .then( (data)=>{ if (data !== null ) {if (data.error !== undefined){setLabel('Ошибка');}  else {
           setChannelName('');
           setLabel('Название канала');
           getQuery('/getAllChannels')
@@ -300,7 +301,7 @@ const LeftContent = ({userKey,changeChannels,setChannels,dropChannels,updateChan
           }))
           .then(
             (data)=>{
-              if (data !== null){
+              if (data != null){
                 setChannels(data)
               } else {
                 (console.log('DATA_CHANNELS:',data))
@@ -308,7 +309,6 @@ const LeftContent = ({userKey,changeChannels,setChannels,dropChannels,updateChan
               })
         }}})
     }
-    setBlocker(false)
   }
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -331,8 +331,8 @@ const LeftContent = ({userKey,changeChannels,setChannels,dropChannels,updateChan
     updateSearchState(text)
   }
   useEffect(()=>{
-    changeChannels(currentId)
-  },[currentId])
+    change_channels(current_channel)
+  },[current_channel])
 
 
 
@@ -412,16 +412,14 @@ const LeftContent = ({userKey,changeChannels,setChannels,dropChannels,updateChan
           ?
           null
           :
-          <ChannelsList searchWord={searchState} ch={addListElement} cb={setCurrentId} addCh={setAddListElement}/>
+          <ChannelsList searchWord={searchState} ch={addListElement} cb={set_current_channel} addCh={setAddListElement}/>
         }
       </ListPart>
     </Root>
   )
 }
 
-export default connect((store)=>({
-  userKey : store.keys.userKey
-}),{
+export default connect(null,{
   setChannels,
   dropChannels,
   updateChannels,
