@@ -10,8 +10,6 @@ import pict from '../../../client/icon.jpg'
 import Button from '@material-ui/core/Button';
 import { decryptUserKey, generateEmailPassHash, generatePwdKey } from '../../services/encryption/highLevelEncryption';
 import { postQuery } from '../../services/query-service';
-import { connect } from 'react-redux';
-import { updateKeys } from '../../actions/keys'
 
 const Screen = styled.div`
   width : 100vw;
@@ -56,7 +54,7 @@ const MyIcon = styled.div`
   background-repeat: no-repeat;
 `
 
-const Auto = ({ updateKeys }) => {
+const Auto = () => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -83,7 +81,7 @@ const Auto = ({ updateKeys }) => {
         if (!data.error) {
           const userKey = decryptUserKey(data._user_key, pwd_key, data.iv);
           console.log({ userKey });
-          updateKeys({ userKey });
+          localStorage.setItem("user_key",userKey)
           history.push("/");
         } else {
           console.log('user:', data)
@@ -113,6 +111,4 @@ const Auto = ({ updateKeys }) => {
   )
 }
 
-export default connect(null, {
-  updateKeys
-})(Auto)
+export default Auto

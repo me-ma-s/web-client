@@ -221,7 +221,7 @@ const ChannelsList = ({searchWord,cb,addCh,ch,channels}) => {
 
     return(
       [
-        <StListItem button={true} onClick={()=>{cb(el.id)}} key={el.id}>
+        <StListItem button={true} onClick={()=>{cb({ id : el.id,key : el.channelKey})}} key={el.id}>
             <ListItemAvatar>
               <StAvatar variant={'rounded'} cl={colorSet[el.name]} src={el.avatar_url}> 
                 {el.name.slice(0,2)}

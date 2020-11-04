@@ -50,20 +50,23 @@ const Root = styled.div`
 `;
 
 const Chat = () => {
-  const [ currentId , setCurrentId  ] = useState(null)
+  const [ current_channel , set_current_channel  ] = useState({
+    id : 0,
+    key : 0
+  })
   return ( 
     <Root>
       <Hidden only={['xs','sm']}>
         <Left>
-          <LeftContent changeChannels={setCurrentId}/>
+          <LeftContent change_channels={set_current_channel}/>
         </Left>
         <Right>
-          <ChatContent id={currentId}/>
+          <ChatContent channel={current_channel}/>
         </Right>
       </Hidden>
       <Hidden only={['lg','xl','md']}>
         <RightWithoutLeft>
-          <ChatContent id={currentId}/>
+          <ChatContent channel={current_channel}/>
         </RightWithoutLeft>
       </Hidden>
     </Root>
