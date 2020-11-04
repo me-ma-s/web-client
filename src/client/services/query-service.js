@@ -12,6 +12,9 @@ const getQuery = async (url, params = {}) => {
   try {
     const res = await fetch(`${apiBase}${url}${paramsForQuery}`);
     const json = await res.json();
+
+    if (!res.ok) console.error(json.error);
+
     return json;
   } catch (error) {
     console.log(error);
@@ -31,6 +34,9 @@ const postQuery = async (url, body) => {
       body: JSON.stringify(body)
     });
     const json = await res.json();
+
+    if (!res.ok) console.error(json.error);
+
     return json;
   } catch (error) {
     console.log(error);

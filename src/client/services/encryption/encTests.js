@@ -1,6 +1,8 @@
 import forge from 'node-forge'
+import { step1_genKeyPair } from './highLevelEncryption'
 import {
   generateRsaKeyPair,
+  generateRsaKeyPairAsync,
   rsaEncrypt,
   rsaDecrypt,
 
@@ -79,5 +81,10 @@ function testAesOfRsa() {
   console.log(decStr)
 }
 
+function testAsyncRsa() {
+  console.log('before')
+  step1_genKeyPair().then((data) => console.log(data))
+  console.log('after')
+}
 
-export { testRsa, testAes, testUserKey, testPwdKey, testRsaOfAes, testAesOfRsa }
+export { testRsa, testAes, testUserKey, testPwdKey, testRsaOfAes, testAesOfRsa, testAsyncRsa }

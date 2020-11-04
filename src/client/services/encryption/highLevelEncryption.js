@@ -1,5 +1,6 @@
 import {
   generateRsaKeyPair,
+  generateRsaKeyPairAsync,
   rsaEncrypt,
   rsaDecrypt,
 
@@ -72,8 +73,9 @@ function generateEmailPassHash(email, password) {
   return sha256(email + ':' + password);
 }
 
-function step1_genKeyPair() {
-  return generateRsaKeyPair();
+async function step1_genKeyPair() {
+  // return generateRsaKeyPair();
+  return await generateRsaKeyPairAsync();
 }
 
 function step1_genBody(userKey, keyPair) {

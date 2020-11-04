@@ -9,6 +9,26 @@ function generateRsaKeyPair() {
   return { privKey, pubKey };
 }
 
+async function generateRsaKeyPairAsync() {
+  // const keyPair = forge.rsa.generateKeyPair({ bits: 2048, e: 0x10001 });
+  const keyPair = await new Promise((resolve, reject) => {
+    forge.rsa.generateKeyPair(
+      { bits: 2048, e: 0x10001, workers: -1 },
+      (err, keyPair) => {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve(keyPair);
+        }
+      }
+    );
+  })
+  const privKey = forge.pki.privateKeyToPem(keyPair.privateKey);
+  const pubKey = forge.pki.publicKeyToPem(keyPair.publicKey);
+  return { privKey, pubKey };
+}
+
 function rsaEncrypt(value, pubKey) {
   if (!value) throw new Error('value undefined')
   if (!pubKey) throw new Error('pubKey undefined')
@@ -80,7 +100,7 @@ function aesDecrypt(hexValue, hexKey, hexIv) {
   decipher.update(forge.util.createBuffer(value));
 
   const ret = decipher.output.toString().replace(/\u0010/g, '');
-  
+
   return ret;
 }
 
@@ -94,6 +114,7 @@ function sha256(str) {
 
 export {
   generateRsaKeyPair,
+  generateRsaKeyPairAsync,
   rsaEncrypt,
   rsaDecrypt,
 
