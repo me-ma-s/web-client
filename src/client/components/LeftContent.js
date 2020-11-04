@@ -5,7 +5,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import { FilledInput, InputLabel } from '@material-ui/core';
+import { InputLabel } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { getQuery, postQuery } from '../services/query-service'
 import { generateChannelKey , step1_genKeyPair, step1_genBody, generatePwdKey, encryptChannelKey, decryptChannelKey} from '../services/encryption/highLevelEncryption';
@@ -21,11 +21,11 @@ import TextField from '@material-ui/core/TextField';
 import ChannelsList from './ChannelsList'
 import { connect } from 'react-redux';
 import {setChannels,dropChannels,updateChannels} from '../actions/channels'
-import HowToRegIcon from '@material-ui/icons/HowToReg';
 import DoneIcon from '@material-ui/icons/Done';
-import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { generateIv } from '../services/encryption/lowLevelEncryption';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { useHistory } from "react-router-dom";
 
 
 
@@ -77,7 +77,7 @@ const TabsPlace = styled.div`
 `;
 
 const FixedPart = styled.div`
-  height : ${props=>props.stt ? '170px' : '110px'};
+  height : ${props=>props.stt + 'px'};
 `;
 
 const ListPart = styled.div`
@@ -139,6 +139,33 @@ const Root = styled.div`
   display : flex;
   overflow : none;
   flex-direction: column;
+  height : 100%;
+`;
+
+const ContactPlace = styled.div`
+  background-color : rgba(240,240,240,0.1);
+  overflow : none;
+  flex-direction: column;
+  height : ${props=>props.stt + 'px'};
+  width : 100%;
+`
+const PersonalPlace = styled.div`
+  background-color : rgba(240,240,240,0.1);
+  overflow : none;
+  flex-direction: row;
+  height : ${props=>props.stt + 'px'};
+  width : 100%;
+`
+
+const InputPlace = styled.div`
+  width : 100%;
+  display : flex;
+  height : 50%;
+`;
+
+const InputPlaceCC = styled.div`
+  width : 100%;
+  display : flex;
   height : 100%;
 `;
 
@@ -208,19 +235,38 @@ const StListSubheader = styled.div`
 `
 const StMenu = styled(Menu)`
   color : green;
-
+  width : 100%;
 `;
 
 const StMenuItem = styled(MenuItem)`
   padding: 0px 10px;
+  margin : 0;
   & > svg {
     padding-right : 10px;
   }
 `;
 
+const MiniContainer = styled.div`
+  width : 10%;
+  background-color : rgba(0,0,0,0.02);
+  align-items: center;
+  display : flex;
+  justify-content: center;
+  border-bottom : solid 2px lightgrey;
+  border-left : solid 2px lightgrey;
+  border-right : solid 1px lightgrey;
+  height : calc(100% - 2px);
+`;
+
+const MaxiContainer = styled.div`
+  width : 90%;
+  background-color :white;
+`;
+
+
 const PersonInput = styled(TextField)`
-  width : 280px;
-  height : 30px;
+  width : 90%;
+  height : ${props=>props.stt/2 + 'px'};
   direction: rtl;
   & > div{
     height : 60px;
@@ -237,19 +283,19 @@ const PersonInput = styled(TextField)`
         outline : none !important;
       }
       &:after {
-        border-bottom: none;
+        border-bottom: solid 2px #1976d2;
       }
   }
 `;
 
 const StPerIcBt = styled(IconButton)`
-  padding : 0;
-  margin-left : 10px;
+  padding : 5px;
+  font-size : 24px;
   color : black;
 `; 
 
 
-const LeftContent = ({change_channels,setChannels,dropChannels,updateChannels}) => {
+const LeftContent = ({timer,change_channels,setChannels,dropChannels,updateChannels}) => {
 
   const [ tabsState , updateTabsState ] = useState(false)
   const [ searchState , updateSearchState] = useState('')
@@ -258,11 +304,14 @@ const LeftContent = ({change_channels,setChannels,dropChannels,updateChannels}) 
       id : 0
     }
   )
-  const [ addListElement , setAddListElement ] = useState(false);
+  const [ addListElement , setAddListElement ] = useState(0);
   const [ channelName , setChannelName ] = useState('');
   const [ label , setLabel ] = useState('Название канала');
-  const [ invite_key , setInvite_key] = useState('');
+  const [ invite_key , setInvite_key] = useState('Генерируем новый ключ...');
+  const [ personalMenu, setPersonalMenu ] = React.useState(0);
+  const [ contactMenu,  setContactMenu] = useState(0);
   const userKey = localStorage.getItem("user_key")
+  const history = useHistory();
 
   useEffect(()=>{
     getQuery('/getAllChannels')
@@ -278,6 +327,7 @@ const LeftContent = ({change_channels,setChannels,dropChannels,updateChannels}) 
         console.log('DATA_CHANNELS:',data)
       }
     })
+    generateInviteText()
   },[])
 
   const AddChannel = () => {
@@ -311,20 +361,34 @@ const LeftContent = ({change_channels,setChannels,dropChannels,updateChannels}) 
     }
   }
 
-  const [anchorEl, setAnchorEl] = useState(null);
+  const generateInviteText = async () => {
+    console.log('Begin')
+    return( new Promise(function(resolve,reject){
+      //const keyPair = step1_genKeyPair();
+      //const postBody = step1_genBody(userKey,keyPair);
+      //setInvite_key('Tiki_taka')
+      resolve({state:'ok'})
+    }))
+  }
 
-  const openMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-    
-    //let keyPair = step1_genKeyPair();
-    //let body = step1_genBody();
-
-    setInvite_key('')
+  const openContactMenu = () => {
+    contactMenu==0?setContactMenu(80):setContactMenu(0);
+    setPersonalMenu(0);
   };
 
-  const closeMenu = () => {
-    setAnchorEl(null);
+  const closeContactMenu = () => {
+    setContactMenu(0);
+    setInvite_key('Генерируем новый ключ...')
+    generateInviteText()
   };
+
+  const openPersonalMenu = () => {
+    personalMenu==0?setPersonalMenu(40):setPersonalMenu(0);
+    setContactMenu(0)
+  };
+  const closePersonalMenu = () => {
+    setPersonalMenu(0)
+  }
 
 
   const setSearchState = ( text ) => {
@@ -334,39 +398,68 @@ const LeftContent = ({change_channels,setChannels,dropChannels,updateChannels}) 
     change_channels(current_channel)
   },[current_channel])
 
+  const exitFromChat = ()=>{
+    change_channels({
+      id : 0,
+      key :0
+    })
+    clearInterval(timer)
+    getQuery('/logOut')
+    localStorage.removeItem("user_key")
+    history.push("/authorization");
+  }
+
 
 
   return ( 
     <Root>
-      <FixedPart stt={addListElement} >
-        <Header page='Left' cb={setSearchState} person={openMenu}/>
-        <StMenu
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          getContentAnchorEl={null}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={closeMenu}
-        >
-          <StMenuItem>
-            <PersonInput placeholder={'Введите код приглашения'} key={1} variant="filled" />
-            <StPerIcBt>
-              <DoneIcon fontSize='inherit'/>
-            </StPerIcBt>
-          </StMenuItem>
-          <StMenuItem>
-            <PersonInput value={invite_key} onChange={null} key={2} variant="filled" />
-            <StPerIcBt>
-              <FileCopyIcon fontSize='inherit'/>
-            </StPerIcBt>
-          </StMenuItem>
-        </StMenu>
+      <FixedPart stt={110+addListElement+contactMenu+personalMenu} >
+        <Header page='Left' cb={setSearchState} personMenu={openPersonalMenu} contactMenu={openContactMenu} />
+        {
+          contactMenu != 0
+          ?
+          <ContactPlace stt={contactMenu}>
+            <InputPlace>
+              <PersonInput stt={contactMenu} placeholder={'Введите код приглашения'} key={1} variant="filled" />
+              <MiniContainer>
+                <StPerIcBt>
+                  <DoneIcon fontSize='inherit'/>
+                </StPerIcBt>
+              </MiniContainer>
+            </InputPlace> 
+            <InputPlace> 
+              <PersonInput stt={contactMenu} value={invite_key} onChange={null} key={2} variant="filled" />
+              <MiniContainer>
+                <StPerIcBt>
+                  <FileCopyIcon fontSize='inherit'/>
+                </StPerIcBt>
+              </MiniContainer>
+            </InputPlace>
+          </ContactPlace>
+          :
+          null
+        }
+        {
+          personalMenu != 0
+          ?
+          <PersonalPlace stt={personalMenu}>
+            <InputPlaceCC>
+              <MaxiContainer>
+                Anime
+              </MaxiContainer>
+              <MiniContainer>
+                <StPerIcBt onClick={exitFromChat} >
+                  <ExitToAppIcon fontSize='inherit'/>
+                </StPerIcBt>
+              </MiniContainer>
+            </InputPlaceCC>
+          </PersonalPlace>
+          :
+          null
+        }
         <TabsPlace>
           <AddIconArea>
-            <StIcBt onClick={()=>setAddListElement(!addListElement)}>
+            <StIcBt onClick={()=>setAddListElement(addListElement==60?0:60)}>
               <StAddIcon />
             </StIcBt>
           </AddIconArea>
@@ -380,7 +473,7 @@ const LeftContent = ({change_channels,setChannels,dropChannels,updateChannels}) 
         </TabsPlace>
         <Divider/>
         {
-          addListElement
+          addListElement!=0
           ?
           <AddPlace> 
             <StAvatar variant={'rounded'} cl='grey'> 
@@ -391,10 +484,10 @@ const LeftContent = ({change_channels,setChannels,dropChannels,updateChannels}) 
               <Input value={channelName} onChange={(e)=>{setChannelName(e.target.value)}}/>
             </StFormControl>
             <MiniBox>
-              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();AddChannel();setAddListElement(true)}}>
+              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();AddChannel();setAddListElement(60)}}>
                 <StCheckIcon/>
               </StListSubheader>
-              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();setChannelName('');setLabel('Название канала');setAddListElement(false)}}>
+              <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();setChannelName('');setLabel('Название канала');setAddListElement(0)}}>
                 <StCloseIcon/>
               </StListSubheader>
               <StListSubheader onClick={(e)=>{e.stopPropagation(); e.preventDefault();}}>

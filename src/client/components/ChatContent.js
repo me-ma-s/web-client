@@ -48,20 +48,22 @@ const Block = styled.div`
   height : 100%;
 `;
 
-const ChatContent = ({ channel }) => {
+const ChatContent = ({ channel,setTimer,timer}) => {
 
   const [messages, setMessages] = useState([])
   const [text, setText] = useState('')
-  const [timer, setTimer] = useState(null)
+  
 
   useEffect(() => {
-    clearTimeout(timer);
-    getMessage(channel)
-    setTimer(setInterval(() => { getMessage(channel) }, 3000))
+    clearInterval(timer);
+    if ( channel.id != 0){
+      getMessage(channel)
+      setTimer(setInterval(() => { getMessage(channel) }, 3000))
+    }
+    return(()=>{clearInterval(timer)})
   }, [channel])
 
   const getMessage = (channel) => {
-    console.log('Timeout:::', channel)
     setMessages([]);
     getQuery('/getMessages/', { channel_id : channel.id })
       .then((msgArr) => msgArr.map((msg) => decryptMsg(msg, channel.key )))

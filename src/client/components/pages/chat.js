@@ -54,14 +54,15 @@ const Chat = () => {
     id : 0,
     key : 0
   })
+  const [timer, setTimer] = useState(null)
   return ( 
     <Root>
       <Hidden only={['xs','sm']}>
         <Left>
-          <LeftContent change_channels={set_current_channel}/>
+          <LeftContent timer={timer} change_channels={set_current_channel}/>
         </Left>
         <Right>
-          <ChatContent channel={current_channel}/>
+          <ChatContent setTimer={setTimer} timer={timer} channel={current_channel}/>
         </Right>
       </Hidden>
       <Hidden only={['lg','xl','md']}>

@@ -96,17 +96,17 @@ const LastBox = styled.div`
 `;
 
 
-const Header = ( { page, cb, person} ) => {
+const Header = ( { page, cb, personMenu,contactMenu} ) => {
   return ( 
     <Root>
       { page === 'Left'
         ?
         [ 
           <SmallBox key={0}>
-            <StIcButMenu > <MenuIcon/> </StIcButMenu>
+            <StIcButMenu onClick={personMenu} > <MenuIcon/> </StIcButMenu>
           </SmallBox>,
           <SmallBox key={1} >
-          <StIcButMenu onClick={person} > <PersonAddIcon/> </StIcButMenu>
+          <StIcButMenu onClick={contactMenu} > <PersonAddIcon/> </StIcButMenu>
           </SmallBox>,
           <LastBox key={2}>
             <BeautySearch onChange={(e)=>{cb(e.target.value)}} placeholder={'Поиск...'} key={2} variant="filled" />
