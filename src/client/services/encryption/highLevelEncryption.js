@@ -82,7 +82,7 @@ function step1_genBody(userKey, keyPair) {
   const iv = generateIv();
   return {
     iv,
-    _privKey: aesEncrypt(keyPair.privKey, userKey, iv)
+    _priv_key: aesEncrypt(keyPair.privKey, userKey, iv)
   }
 }
 

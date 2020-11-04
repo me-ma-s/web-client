@@ -8,7 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { InputLabel } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { getQuery, postQuery } from '../services/query-service'
-import { generateChannelKey , step1_genKeyPair, step1_genBody, generatePwdKey, encryptChannelKey, decryptChannelKey} from '../services/encryption/highLevelEncryption';
+import { generateChannelKey , step1_genKeyPair, step1_genBody, generatePwdKey, encryptChannelKey, decryptChannelKey, step1_genInvitation} from '../services/encryption/highLevelEncryption';
 import SettingsIcon from '@material-ui/icons/Settings';
 import CloseIcon from '@material-ui/icons/Close';
 import CheckIcon from '@material-ui/icons/Check';
@@ -327,7 +327,6 @@ const LeftContent = ({timer,change_channels,setChannels,dropChannels,updateChann
         console.log('DATA_CHANNELS:',data)
       }
     })
-    generateInviteText()
   },[])
 
   const AddChannel = () => {
@@ -362,34 +361,29 @@ const LeftContent = ({timer,change_channels,setChannels,dropChannels,updateChann
   }
 
   const generateInviteText = async () => {
-    console.log('Begin')
-    return( new Promise(function(resolve,reject){
-      //const keyPair = step1_genKeyPair();
-      //const postBody = step1_genBody(userKey,keyPair);
-      //setInvite_key('Tiki_taka')
-      resolve({state:'ok'})
-    }))
+    const keyPair  = await step1_genKeyPair();
+    const postBody = step1_genBody(userKey,keyPair);
+    const erza = await postQuery('/firstStep',postBody);
+    const invite_text = step1_genInvitation(erza,keyPair);
+    setInvite_key(invite_text)
   }
+
+  useEffect(()=>{
+    if (contactMenu == 0 ){
+      setInvite_key('Генерируем ключ :)')
+      generateInviteText()
+    }
+  },[contactMenu])
 
   const openContactMenu = () => {
     contactMenu==0?setContactMenu(80):setContactMenu(0);
     setPersonalMenu(0);
   };
 
-  const closeContactMenu = () => {
-    setContactMenu(0);
-    setInvite_key('Генерируем новый ключ...')
-    generateInviteText()
-  };
-
   const openPersonalMenu = () => {
     personalMenu==0?setPersonalMenu(40):setPersonalMenu(0);
     setContactMenu(0)
   };
-  const closePersonalMenu = () => {
-    setPersonalMenu(0)
-  }
-
 
   const setSearchState = ( text ) => {
     updateSearchState(text)
@@ -408,8 +402,6 @@ const LeftContent = ({timer,change_channels,setChannels,dropChannels,updateChann
     localStorage.removeItem("user_key")
     history.push("/authorization");
   }
-
-
 
   return ( 
     <Root>
