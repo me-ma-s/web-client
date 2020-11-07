@@ -64,12 +64,13 @@ const ChatContent = ({ channel,setTimer,timer}) => {
   }, [channel])
 
   const getMessage = (channel) => {
-    setMessages([]);
     getQuery('/getMessages/', { channel_id : channel.id })
       .then((msgArr) => msgArr.map((msg) => decryptMsg(msg, channel.key )))
       .then(setMessages)
       .catch(console.log);
   }
+
+  console.log('Mess:',messages)
 
   const GetListItem = (el) => {
     return (
